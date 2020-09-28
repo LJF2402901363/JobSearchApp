@@ -1,0 +1,2 @@
+# JobSearchApp
+基于Python的flask网络爬虫web项目
