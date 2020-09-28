@@ -1,0 +1,22 @@
+{
+
+  "url":"https://www.liepin.com/zhaopin/",
+   "jobInfoLinkDiv": {"name1":".job-info h3 a"},
+   "jobNameDiv": {"name1": "div.title-info > h1"},
+    "jobCompanyNameDiv": {"name1": "div.title-info > h3 a"},
+   "jobSalaryDiv": {
+     "name1": ".job-item-title",
+     "name2": ".job-main-title",
+     "name3": ".job-title-left"
+   },
+  "jobQualificationsDiv": {
+    "name1":"div.job-title-left > div > span"
+    },
+  "jobDesDiv": {
+    "name1":"div.job-item.main-message.job-description > div",
+    "name2": "div.job-main.job-description.main-message > div"
+  },
+  "jobAgeDiv": {
+    "name1": "div.job-title-left > div > span"
+  }
+}

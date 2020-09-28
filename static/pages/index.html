@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>职位数据分析</title>
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="../css/searchBar.css"/>
+    <link rel="stylesheet" href="../css/bootstrap.min.css"/>
+    <link rel="shortcut icon" href="/favicon.ico"/>
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+    <!-- jQuery -->
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/echarts.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/distpicker.min.js"></script>
+    <link rel="stylesheet" href="../css/styles.css" type="text/css"/>
+    <script src="../js/e-smart-zoom-jquery.min.js"></script>
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+
+    <!-- 搜索框 -->
+    <div align="center" style="margin-top: 100px;">
+        <div class="btn-group">
+            <div id="distpicker" data-toggle="distpicker">
+                <span>区域：</span>
+                <select id="province"></select>
+                <select id="city"></select>
+                <button id="resetBtnId" type="button" class="btn btn-danger">重置</button>
+            </div>
+        </div>
+        <form id="searchFormId" class="bs-example bs-example-form" role="form">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="input-group">
+                        <input id="searchInputId" name="searchContent" type="text" class="form-control"
+                               placeholder="输入关键字搜索">
+                        <span class="input-group-btn">
+									<button id="searchBtnId" class="btn btn-default" type="button">搜索</button>
+								</span>
+                    </div><!-- /input-group -->
+                </div><!-- /.col-lg-6 -->
+            </div><!-- /.row -->
+        </form>
+    </div>
+    <!--词云图-->
+<div id="page" align="center" style="height: 300px;width: 640px;margin-bottom: 100px;margin-left: 20%">
+    <div id="pageContent" align="center">
+        <img id="imageFullScreen" src="../img/small.jpg"/>
+    </div>
+    <div id="positionButtonDiv" style="margin-left: 0px">
+        <p> 缩放
+            <span>
+			    <img id="zoomInButton" class="zoomButton" src="../img/zoomIn.png" title="zoom in" alt="放大"/>
+			    <img id="zoomOutButton" class="zoomButton" src="../img/zoomOut.png" title="zoom out" alt="缩小"/>
+			</span>
+        </p>
+
+    </div>
+</div>
+<!-- 条形图  -->
+<div id="barChart" style="width: 100%;height:500px;margin-top: 150px;" align="center"></div>
+</div>
+
+<!-- ./wrapper -->
+
+<!--搜索框的处理 -->
+<script>
+    $(function () {
+        var defaultProvice = '---- 所在省 ----';
+        var defaultCity = '---- 所在市 ----';
+
+        //初始话省份和市
+        $('#distpicker').distpicker({
+            province: defaultProvice,
+            city: defaultCity,
+        });
+        $("#resetBtnId").click(function () {
+            $("#distpicker").distpicker('reset');
+        })
+        // 搜索的事件监听
+        $("#searchBtnId").click(function () {
+            var province = $("#province").val();
+            var city = $("#city").val();
+            if (province == defaultProvice) {
+                province = "";
+                city = "";
+            }
+
+            var searchContent = $("#searchInputId").val();
+            if (searchContent.trim() == "") {
+                alert("请输入搜索内容！")
+                return
+            }
+
+            function fu(data) {
+                alert(data.status)
+            }
+
+            //发送ajax给服务器
+            $.ajax({
+                "url": "http://127.0.0.1:5000/search",
+                "data": {'searchContent': searchContent, 'province': province, 'city': city},
+                "dataType": "json",
+                "type": "post",
+                "success": function (data) {
+                    if (data.status == 1) {
+                        chartsRender(data);
+                        alert("搜索完成！")
+                        $.getJSON("../json/fileAndImgPro.json", function (jsondata) {
+                            $("#imageFullScreen").attr("src", "../../" + jsondata['wordCloudImg_small'] + "/?time=" + new Date().getTime())
+                            $('#page').show();
+                        })
+
+                    }
+                },
+                "error": function () {
+                    alert("搜索失败！");
+                //    $('#page').hide();
+                }
+            })
+        })
+    })
+
+    <!--渲染条状图和饼状图-->
+    function chartsRender(data) {
+        var pieChart = echarts.init(document.getElementById("barChart"));
+        var dataName = [];
+        var dataValue = [];
+        var jsonList = data.data.words;
+
+        $.each(jsonList, function (index, value) {
+            dataName.push(value.name);
+            dataValue.push(value.value)
+        })
+        option = {
+            title: {
+                text: '搜索职位数据分析',
+                align:'center',
+                top: '5',
+                left: '50',
+                textStyle: {
+                    fontSize: 20,
+                    fontStyle: "italic",
+                    color: "rgba(15, 16, 15, 1)"
+                }},
+                tooltip: {},
+                legend: {
+                data:dataName,
+                    orient: "vertical",
+                    left: "center",
+                    name:"饼状图",
+                   type: "scroll",
+                    data: ['top10'],
+                    itemGap: 18.5,
+                    top :40,
+                    textStyle: {
+                        color: "rgba(8, 8, 8, 1)",
+                        fontWeight: "bold",
+                        fontSize: 13,
+                        fontStyle: "italic"
+                    }
+                },
+                grid: [{
+                    x: '7%',
+                    y: '15%',
+                    width: '38%',
+                    height: '38%'
+                },],
+                xAxis: [{
+                    gridIndex: 0,
+                    data: dataName
+                }],
+                yAxis: [{
+                    gridIndex: 0
+                }],
+                series: [{
+                    name: 'top10柱状图',
+                    type: 'bar',
+                    data: dataValue,
+                    itemStyle: {
+                        normal: {
+                            color: function (param) {
+                                let  r = Math.floor(Math.random() * 255);
+                                let  g = Math.floor(Math.random() * 255);
+                                let  b = Math.floor(Math.random() * 255);
+                                let color = 'rgba(' + r + ',' +g + ',' + b + ',0.8)';
+                                return color;
+                            }
+                        }
+                    },
+                    label: {
+                        fontStyle: "italic",
+                        fontWeight: "bold",
+                        fontSize: 14
+                    }
+                },
+                    {
+
+                        type: 'pie',
+                        name: 'top10饼状图',
+                        data: function () {
+                        let sumValue = 0;
+                        let  newDataValues = [];
+                        $.each(dataValue, function (index, value) {
+                            sumValue += value;
+                        });
+                        $.each(dataValue, function (index, value) {
+                           let percentage = (value * 1.0 /sumValue / 100 ) + '%' ;
+                            newDataValues.push(percentage) ;
+                        });
+                            let  jsonMap =[];
+                           $.each(newDataValues, function (index, value) {
+                           jsonMap.push('{name:'+dataName[index]+',{ value:'+value+''});
+                        });
+                        return jsonMap;
+                    },
+                        radius: '40%',
+                        center: ['70%', '30%'],
+                        label: {
+                            fontStyle: "italic",
+                            fontWeight: "bold",
+                            fontSize: 14
+                        }
+                    }
+                ]
+            };
+
+            pieChart.setOption(option);
+        }
+
+</script>
+<!--缩放模块-->
+<script>
+    $(document).ready(function () {
+        // 获取图片真实高度
+        function getImageWidth(url, callback) {
+            var img = new Image();
+            img.src = url;
+            // 如果图片被缓存，则直接返回缓存数据
+            if (img.complete) {
+                callback(img.width, img.height);
+            } else {
+                img.onload = function () {
+                    callback(img.width, img.height);
+                }
+            }
+        }
+
+        var imgSrc = $("#imageFullScreen").attr("src");
+        getImageWidth(imgSrc, function (w, h) {
+            //  {#alert("width:"+w+",height:"+h)#}
+            $('#imageFullScreen').smartZoom({
+                'containerClass': 'zoomableContainer',
+                'top': '30',
+                'left': '10',
+                'bottom': '0',
+                'right': '5',
+                'width': w + 60,
+                'height': h,
+                'containerBackground': '#9db699'
+
+            });
+        });
+
+
+        $('#topPositionMap,#leftPositionMap,#rightPositionMap,#bottomPositionMap').bind("click", moveButtonClickHandler);
+        $('#zoomInButton,#zoomOutButton').bind("click", zoomButtonClickHandler);
+
+        function zoomButtonClickHandler(e) {
+            var scaleToAdd = 0.8;
+            if (e.target.id == 'zoomOutButton')
+                scaleToAdd = -scaleToAdd;
+            $('#imageFullScreen').smartZoom('zoom', scaleToAdd);
+        }
+
+        function moveButtonClickHandler(e) {
+            var pixelsToMoveOnX = 0;
+            var pixelsToMoveOnY = 0;
+
+            switch (e.target.id) {
+                case "leftPositionMap":
+                    pixelsToMoveOnX = 50;
+                    break;
+                case "rightPositionMap":
+                    pixelsToMoveOnX = -50;
+                    break;
+                case "topPositionMap":
+                    pixelsToMoveOnY = 50;
+                    break;
+                case "bottomPositionMap":
+                    pixelsToMoveOnY = -50;
+                    break;
+            }
+
+        }
+
+        // $('#page').hide();
+    });
+</script>
+</body>
+</html>
