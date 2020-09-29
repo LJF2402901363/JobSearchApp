@@ -25,7 +25,7 @@
 
     <!-- 搜索框 -->
     <div align="center" style="margin-top: 100px;">
-        <div class="btn-group">
+        <div class="btn-group" align="center">
             <div id="distpicker" data-toggle="distpicker">
                 <span>区域：</span>
                 <select id="province"></select>
@@ -33,9 +33,10 @@
                 <button id="resetBtnId" type="button" class="btn btn-danger">重置</button>
             </div>
         </div>
-        <form id="searchFormId" class="bs-example bs-example-form" role="form">
-            <div class="row">
-                <div class="col-lg-6">
+       <div align="center">
+            <form id="searchFormId" class="bs-example bs-example-form" role="form" >
+            <div class="row" >
+                <div class="col-lg-6" >
                     <div class="input-group">
                         <input id="searchInputId" name="searchContent" type="text" class="form-control"
                                placeholder="输入关键字搜索">
@@ -46,10 +47,11 @@
                 </div><!-- /.col-lg-6 -->
             </div><!-- /.row -->
         </form>
+       </div>
     </div>
     <!--词云图-->
-<div id="page" align="center" style="height: 300px;width: 640px;margin-bottom: 100px;margin-left: 20%">
-    <div id="pageContent" align="center">
+<div id="page" align="center" >
+    <div id="pageContent" align="center" style="height: 550px;width: 640px;margin-bottom: 100px">
         <img id="imageFullScreen" src="../img/small.jpg"/>
     </div>
     <div id="positionButtonDiv" style="margin-left: 0px">
@@ -63,7 +65,7 @@
     </div>
 </div>
 <!-- 条形图  -->
-<div id="barChart" style="width: 100%;height:500px;margin-top: 150px;" align="center"></div>
+<div id="barChart" style="height:500px;margin-top:500px;" align="center"></div>
 </div>
 
 <!-- ./wrapper -->
@@ -132,11 +134,18 @@
         var dataName = [];
         var dataValue = [];
         var jsonList = data.data.words;
-
-        $.each(jsonList, function (index, value) {
+        let sumValue = 0;
+        let pieDataValues = [];
+         $.each(jsonList, function (index, value) {
             dataName.push(value.name);
             dataValue.push(value.value)
         })
+        //获取总数
+        $.each(dataValue, function (index, value) {
+            sumValue += value;
+        });
+
+
         option = {
             title: {
                 text: '搜索职位数据分析',
@@ -203,28 +212,22 @@
 
                         type: 'pie',
                         name: 'top10饼状图',
-                        data: function () {
-                        let sumValue = 0;
-                        let  newDataValues = [];
-                        $.each(dataValue, function (index, value) {
-                            sumValue += value;
-                        });
-                        $.each(dataValue, function (index, value) {
-                           let percentage = (value * 1.0 /sumValue / 100 ) + '%' ;
-                            newDataValues.push(percentage) ;
-                        });
-                            let  jsonMap =[];
-                           $.each(newDataValues, function (index, value) {
-                           jsonMap.push('{name:'+dataName[index]+',{ value:'+value+''});
-                        });
-                        return jsonMap;
-                    },
+                        data: jsonList,
                         radius: '40%',
                         center: ['70%', '30%'],
                         label: {
                             fontStyle: "italic",
                             fontWeight: "bold",
-                            fontSize: 14
+                            fontSize: 14,
+                            normal:{
+                                show:true,
+                                position:'outside', //标签的位置
+                                textStyle : {
+                                    fontWeight : 300 ,
+                                    fontSize : 16    //文字的字体大小
+                                },
+                                formatter: '{b} : {c} ({d}%)'
+                            }
                         }
                     }
                 ]
