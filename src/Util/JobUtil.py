@@ -10,6 +10,11 @@ class JobUtil:
 
     @staticmethod
     def getHtmlTex(url):
+        """
+        获取url对应的网页内容，即获取网页的源码便于分析
+        :param url:
+        :return:
+        """
         # 生成随机请求头
         header = {"User-Agent": UserAgent().random}
         # 获取请求内容
@@ -28,7 +33,6 @@ class JobUtil:
         # 获取所有包含职业名称以及职业详细链接的a标签
         jobInfo = JobInfo()
         # 获取工作的名称
-        # jobNameDiv = soup.select("div.title-info > h1")
         jobNameDiv = soup.select(JsonUtil.getUrlSettingProValueByKey("jobNameDiv")['name1'])
         if len(jobNameDiv) > 0:
             jobName = jobNameDiv[0].text

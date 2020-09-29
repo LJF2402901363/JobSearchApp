@@ -20,7 +20,7 @@ def search():
     # 获市文本
     city = request.values.get("city")
     # 拼接要爬取数据的URL
-    url = JsonUtil.getUrlSettingProValueByKey("url") + "?key=" + searchContent + "&dqs=010&pageSize=80"
+    url = JsonUtil.getUrlSettingProValueByKey("url") + "?key=" + searchContent + "&dqs=&pageSize=80"
     # 获取爬取的所有JobInfo集合
     jobList = JobUtil.getJobList(url)
     wordText = ""

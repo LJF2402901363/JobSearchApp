@@ -40,6 +40,12 @@ class WordCloudUtil:
 
     @staticmethod
     def getWordCouldJson(text,wordJson):
+        """
+        将给定的文本进心分词处理，并且添加json格式的新词，在分词过程中wordJSon中的词语不被切分
+        :param text:
+        :param wordJson:
+        :return:
+        """
         for word in wordJson:
             jieba.add_word(word['word'],word['freq'])
         words = jieba.cut(text)  # 使用精确模式对文本进行分词

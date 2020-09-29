@@ -25,24 +25,61 @@ class JsonUtil:
 
     @staticmethod
     def readFileToJson(jsonFilePath):
+        """
+        将json文件读取为json对象
+        :param jsonFilePath:
+        :return:
+        """
         json_data = open(file=jsonFilePath, mode="r", encoding="utf8")
         jsonData = json.load(json_data)
         return jsonData
 
     @staticmethod
     def getFileAndImgProValueByKey(key):
+        """
+        通过key来获取json对应的value值
+        :param key: json对象中的key
+        :return:
+        """
         return JsonUtil.stc_fileAndImgPro[key]
 
     @staticmethod
     def getUrlSettingProValueByKey(key):
+        """
+        通过key来获取json对应的value值
+        :param key: json对象中的key
+        :return:
+        """
         return JsonUtil.stc_urlSettingPro[key]
 
     @staticmethod
     def jsonStrToJson(jsonStr):
+        """
+        将json字符串转化为json对象
+        :param jsonStr:
+        :return:
+        """
         return json.loads(jsonStr)
 
     @staticmethod
     def jsonListToViewJson(jsonObj):
+        """
+        将一个json对象转换为符合前端页面展示数据的json字符串
+        格式：
+        {
+            "data":
+            {
+            "words":
+            [
+              { name: key}
+            ],
+            "totalValue": value,
+            "total":value
+            }
+        "status":1}
+        :param jsonObj: 需要转换的json对象数组
+        :return:
+        """
         jsonstr = '{ "data":{ "words":['
         index = 0
         count = 0

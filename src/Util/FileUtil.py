@@ -20,9 +20,15 @@ class FileUtil:
         file.close()
 
     @staticmethod
-    def readFileToTex(filename, ignoreWords):
+    def readFileToTex(textFilePath, ignoreWords):
+        """
+        将指定的文件内的文本读取，然后使用正则表达式过滤掉不需要的词句
+        :param textFilePath: 文本文件路径
+        :param ignoreWords: 要除去的词句的正则表达式
+        :return:
+        """
         # 特殊符号和部分无意义的词
-        txt = open(filename, encoding='utf-8').read()
+        txt = open(textFilePath, encoding='utf-8').read()
         # 替换
         txt = re.sub(ignoreWords, " ", txt)
         return txt
