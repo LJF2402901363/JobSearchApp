@@ -1,14 +1,4 @@
 class JobInfo:
-    def __init__(self,jobName,jobSalary,jobCity,jobEdu,codeName,age,jobExperienceTime,jobDes,jobRequire):
-        self.__jobName = jobName
-        self.__jobSalary = jobSalary
-        self.__jobCity = jobCity
-        self.__jobEdu = jobEdu
-        self.__jobExperienceTime = jobExperienceTime
-        self.__jobDes = jobDes
-        self.__jobRequire = jobRequire
-        self.__codeName = codeName
-        self.__age = age
     def __init__(self):
         self.__jobName = ""
         self.__jobSalary = ""
@@ -16,10 +6,10 @@ class JobInfo:
         self.__jobEdu = ""
         self.__jobExperienceTime = ""
         self.__jobDes = ""
-        self.__jobRequire = ""
         self.__companyName = ""
         self.__codeName = ""
         self.__age = ""
+        self.__jobUrl = ""
     @property
     def jobSalary(self):
         return self.__jobSalary
@@ -38,6 +28,7 @@ class JobInfo:
         return self.__jobEdu
     @property
     def jobCity(self):
+
         return self.__jobCity
     @property
     def jobExperienceTime(self):
@@ -45,10 +36,10 @@ class JobInfo:
     @property
     def jobDes(self):
         return self.__jobDes
-    @property
-    def jobRequire(self):
-        return self.__jobRequire
 
+    @property
+    def jobUrl(self):
+        return self.__jobUrl
     @property
     def age(self):
         return self.__age
@@ -65,13 +56,13 @@ class JobInfo:
         self.__jobExperienceTime = jobExperienceTime
     def set_jobDes(self,jobDes):
         self.__jobDes = jobDes
-    def set_jobRequire(self,jobRequire):
-        self.__jobRequire = jobRequire
     def set_companyName(self, companyName):
         self.__companyName = companyName
     def set_codeName(self, codeName):
         self.__codeName = codeName
     def set_age(self, age):
         self.__age = age
+    def set_jobUrl(self, jobUrl):
+        self.__jobUrl = jobUrl
     def printJobInfo(self):
         print("[jobName:"+self.jobName+",jobSalary:"+self.jobSalary+",age:"+self.age+",jobCode:"+self.codeName+",jobCity:"+self.jobCity+",jobEdu:"+self.jobEdu+",jobExperienceTime:"+self.jobExperienceTime+",jobDes:"+self.jobDes+"]")

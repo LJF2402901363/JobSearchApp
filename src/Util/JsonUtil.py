@@ -3,7 +3,7 @@ import json
 
 class JsonUtil:
     stc_fileAndImgPro = json.load(open(file="static/json/fileAndImgPro.json", mode="r", encoding="utf8"))
-    stc_urlSettingPro = json.load(open("static/json/urlSettingPro.json", mode="r", encoding="utf8"))
+    stc_urlSettingPro = json.load(open(file="static/json/urlSettingPro.json", mode="r", encoding="utf8"))
 
     @staticmethod
     def transferObjectToJson(job):
@@ -62,7 +62,7 @@ class JsonUtil:
         return json.loads(jsonStr)
 
     @staticmethod
-    def jsonListToViewJson(jsonObj):
+    def jsonListToViewJson(jsonObj,jobList):
         """
         将一个json对象转换为符合前端页面展示数据的json字符串
         格式：
@@ -73,10 +73,18 @@ class JsonUtil:
             [
               { name: key}
             ],
+
             "totalValue": value,
-            "total":value
-            }
+            "total":value,
+            "jobInfoData":[{
+            name:key
+            }]
+            },
+            "status":200
+
+        }
         "status":1}
+        :param jobList: 所有职位的列表
         :param jsonObj: 需要转换的json对象数组
         :return:
         """
@@ -89,6 +97,22 @@ class JsonUtil:
                 jsonstr = jsonstr + '{"name":"' + obj + '","value":' + str(jsonObj[obj]) + "},"
             else:
                 count = count + jsonObj[obj]
-        jsonstr = jsonstr + '{"name":"其它","value":' + str(4)
-        jsonstr = jsonstr + '}]},"status":1}'
+        jsonstr = jsonstr + '{"name":"其它","value":' + str(4) + "}],"
+        jobListStr = '"jobList":['
+        size = len(jobList)
+        for index in range(size):
+            job = jobList[index]
+            jobListStr = jobListStr + '{"name":"' + job.jobName + '",'
+            jobListStr = jobListStr + '"city":"' + job.jobCity + '",'
+            jobListStr = jobListStr + '"edu":"' + job.jobEdu + '",'
+            jobListStr = jobListStr + '"salary":"' + str(1000) + '",'
+            jobListStr = jobListStr + '"experienceTime":"' + job.jobExperienceTime + '",'
+            jobListStr = jobListStr + '"age":"' + job.age + '",'
+            if index == size - 1:
+                jobListStr = jobListStr + '"codeName":"' + job.codeName + '"}]'
+            else:
+                jobListStr = jobListStr + '"codeName":"' + job.codeName + '"},'
+        jsonstr = jsonstr + jobListStr + '}'
+        jsonstr = jsonstr + ',"status":1}'
+        print(jsonstr)
         return jsonstr

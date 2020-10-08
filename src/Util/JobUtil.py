@@ -24,192 +24,6 @@ class JobUtil:
             raise Exception("请检查您的URL" + url)
         return response.text
 
-    @staticmethod
-    def getJobInfo(url):
-        # 获取请求URL的对应返回HTML源代码
-        html_tex = JobUtil.getHtmlTex(url)
-        # 构建解析对象
-        soup = BeautifulSoup(html_tex, "html.parser")
-        # 获取所有包含职业名称以及职业详细链接的a标签
-        jobInfo = JobInfo()
-        # 获取工作的名称
-        jobNameDiv = soup.select(JsonUtil.getUrlSettingProValueByKey("jobNameDiv")['name1'])
-        if len(jobNameDiv) > 0:
-            jobName = jobNameDiv[0].text
-            jobInfo.set_jobName(jobName)
-        else:
-            jobNameDiv = JobUtil.reGetJboName(url)
-            if len(jobNameDiv) > 0:
-                jobName = jobNameDiv[0].text
-                jobInfo.set_jobName(jobName)
-            else:
-                print("jobName+" + url)
-        # 获取公司名称信息
-        jobCompanyDiv = soup.select(JsonUtil.getUrlSettingProValueByKey("jobCompanyNameDiv")['name1'])
-        if len(jobCompanyDiv) > 0:
-            jobCompany = jobCompanyDiv[0].text
-            jobInfo.set_companyName(jobCompany)
-        else:
-            jobCompanyDiv = JobUtil.reGetJboCompany(url)
-            if len(jobCompanyDiv) > 0:
-                jobCompany = jobCompanyDiv[0].text
-                jobInfo.set_companyName(jobCompany)
-            else:
-                print("jobCompany:" + url)
-        #   获取薪水
-        jobSalaryDivJson = JsonUtil.getUrlSettingProValueByKey("jobSalaryDiv")
-        jobSalaryFla = False
-        for key in jobSalaryDivJson:
-            jobSalaryDiv = soup.select(jobSalaryDivJson[key])
-            if len(jobSalaryDiv) > 0:
-                jobSalary = jobSalaryDiv[0].text.rstrip()
-                jobInfo.set_jobSalary(jobSalary)
-                jobSalaryFla = True
-                break
-        # 获取不到需要重新发送请求获取
-        if not jobSalaryFla:
-            while 1 == 1:
-                jobSalaryDiv = JobUtil.reGetJobSalary(url)
-                if jobSalaryDiv is None:
-                    continue
-                if  len(list(jobSalaryDiv)) > 0:
-                    jobSalary = jobSalaryDiv[0].text.rstrip()
-                    jobInfo.set_jobSalary(jobSalary)
-                    break
-                else:
-                    print("薪水：" + url)
-        #    获取工作要求
-        jobQualificationsDiv = soup.select(JsonUtil.getUrlSettingProValueByKey("jobQualificationsDiv")["name1"])
-        while 1 == 1:
-            if len(jobQualificationsDiv) > 0:
-                index = 0
-                for jobQualification in jobQualificationsDiv:
-                    index = index + 1
-                    text = jobQualification.text
-                    # print(text)
-                    if text is None or text == '':
-                        print("url")
-                    else:
-                        if index == 1:
-                            # 职位学历要求
-                            jobInfo.set_jobEdu(text)
-                        elif index == 2:
-                            # 职位经验要求
-                            jobInfo.set_jobExperienceTime(text)
-                        elif index == 3:
-                            # 职位编程语言要求
-                            jobInfo.set_codeName(text)
-                        elif index == 4:
-                            # 求职者年龄要求
-                            jobInfo.set_age(text)
-                break
-            else:
-                # 重复获取
-                jobQualificationsDiv = JobUtil.reGetJboAge(url)
-        # 获取岗位描述
-        jobDesDiv = JsonUtil.getUrlSettingProValueByKey("jobDesDiv")
-        jobDesDivFla = False
-        for key in jobDesDiv:
-            jobDes = soup.select(jobDesDiv[key])
-            if len(jobDes) > 0:
-                jobInfo.set_jobDes(jobDes[0].text)
-                jobDesDivFla = True
-                break
-        # 获取不到重新发送请求获取
-        if not jobSalaryFla:
-            while 1 == 1:
-                jobDes = JobUtil.reGetJboDes(url)
-                if len(jobDes) > 0:
-                    jobInfo.set_jobDes(jobDes[0].text)
-                    break
-                else:
-                    print("jobDes:" + url)
-        return jobInfo
-
-
-    @staticmethod
-    def reGetJboName(url):
-        """
-        重新发送请求获取工作名称的标签块
-        :param url: 该工作的具体信息URL
-        :return: 返回工作名称的标签块
-        """
-        # 获取请求URL的对应返回HTML源代码
-        html_tex = JobUtil.getHtmlTex(url)
-        # 构建解析对象
-        soup = BeautifulSoup(html_tex, "html.parser")
-        # 获取工作名称
-        jobNameDiv = soup.select(JsonUtil.getUrlSettingProValueByKey("jobNameDiv")['name1'])
-        return jobNameDiv
-
-    @staticmethod
-    def reGetJboAge(url):
-        """
-        重新发送请求然后获取求职者年龄标签块
-        :param url: 该工作的具体信息URL
-        :return: 返回求职者年龄标签块
-        """
-        # 获取请求URL的对应返回HTML源代码
-        html_tex = JobUtil.getHtmlTex(url)
-        # 构建解析对象
-        soup = BeautifulSoup(html_tex, "html.parser")
-        # 获取年龄标签块
-        JboAgeDiv = soup.select(JsonUtil.getUrlSettingProValueByKey("jobAgeDiv")['name1'])
-        return JboAgeDiv
-
-    @staticmethod
-    def reGetJobSalary(url):
-        """
-        重新发送请求获取工作薪水的标签
-        :param url: 该工作具体信息的URL
-        :return: 返回一个薪水标签块
-        """
-        # 获取请求URL的对应返回HTML源代码
-        html_tex = JobUtil.getHtmlTex(url)
-        # 构建解析对象
-        soup = BeautifulSoup(html_tex, "html.parser")
-        jobSalaryDivJson = JsonUtil.getUrlSettingProValueByKey("jobSalaryDiv")
-        for key in jobSalaryDivJson:
-            # 获取薪资标签块
-            jobSalaryDiv = soup.select(jobSalaryDivJson[key])
-            if len(list(jobSalaryDiv)) > 0:
-                return jobSalaryDiv
-            else:
-                print("jobSarlary为空！")
-
-
-
-    @staticmethod
-    def reGetJboCompany(url):
-        """
-        重新发送请求获取工作公司的标签块
-        :param url: 该工作信息的URL
-        :return: 返回工作公司的标签块
-        """
-        # 获取请求URL的对应返回HTML源代码
-        html_tex = JobUtil.getHtmlTex(url)
-        # 构建解析对象
-        soup = BeautifulSoup(html_tex, "html.parser")
-        # 获取所有包含职业名称以及职业详细链接的a标签
-        jobCompanyDiv = soup.select("div.title-info h3")
-        return jobCompanyDiv
-
-    @staticmethod
-    def reGetJboDes(url):
-        """
-        重新发送请求获取工作描述的标签快
-        :param url: 指定的URL
-        :return: 返回工作描述的标签块
-        """
-        # 获取请求URL的对应返回HTML源代码
-        html_tex = JobUtil.getHtmlTex(url)
-        # 构建解析对象
-        soup = BeautifulSoup(html_tex, "html.parser")
-        # 获取所有包含职业名称以及职业详细链接的a标签
-        jobDesDiv = soup.select(JsonUtil.getUrlSettingProValueByKey("jobDesDiv")['name1'])
-        if len(jobDesDiv) == 0:
-            jobDesDiv = soup.select(JsonUtil.getUrlSettingProValueByKey("jobDesDiv")['name2'])
-        return jobDesDiv
 
     @staticmethod
     def getJobList(url):
@@ -220,6 +34,7 @@ class JobUtil:
         """
         # 获取请求URL的对应返回HTML源代码
         html_tex = JobUtil.getHtmlTex(url)
+        # print(html_tex)
         jobList = []
         # 构建解析对象
         soup = BeautifulSoup(html_tex, "html.parser")
@@ -232,6 +47,71 @@ class JobUtil:
                 jobInfo = JobUtil.getJobInfo(jobInfoLink)
                 jobList.append(jobInfo)
             else:
-                jobInfo = JobUtil.getJobInfo("https://www.liepin.com/" + jobInfoLink)
+                # 有些job的URL是不完整的需要补充,比如：/a/21271755.shtml，则要补偿为： https://www.liepin.com/a/21271755.shtml
+                jobInfo = JobUtil.getJobInfo(JsonUtil.getUrlSettingProValueByKey("url") + jobInfoLink)
                 jobList.append(jobInfo)
         return jobList
+    @staticmethod
+    def getJobInfo(jobInfoUrl):
+        """
+        通过工作的详细信息URL获取对应的封装对象
+        :param jobInfoUrl: 工作的详细信息URL
+        :return: 返回一个JobInfo对象
+        """
+        # 实例化对象
+        jobInfo = JobInfo()
+
+        jobInfo.set_jobUrl(jobInfoUrl)
+        # 获取工作URL详细的信息的网页源码
+        html_tex = JobUtil.getHtmlTex(jobInfoUrl)
+        # 获取工作名称
+        jobName = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobNameDiv"))
+        jobInfo.set_jobName(jobName)
+        # print(jobName)
+        # 获取薪水
+        salary = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobSalaryDiv"))
+        salary = salary.rstrip()
+        jobInfo.set_jobSalary(salary)
+        # print(salary)
+        # 获取公司名称
+        jobCompanyName = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobCompanyNameDiv"))
+        jobInfo.set_companyName(jobCompanyName)
+        # print(jobCompanyName)
+        # 获取工作所在城市
+        city = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobCityDiv"))
+        jobInfo.set_jobCity(city)
+        # print(city)
+        # 获取工作要求的文凭
+        edu = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobEduDiv"))
+        jobInfo.set_jobEdu(edu)
+        # print(edu)
+        # 获取工作经验年长
+        jobExperienceTime = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobExperienceTimeDiv"))
+        # print(jobExperienceTime)
+        jobInfo.set_jobExperienceTime(jobExperienceTime)
+        # 获取需要经过的编程语言
+        codeName = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobCodeNameDiv"))
+        # print(codeName)
+        jobInfo.set_codeName(codeName)
+        # 获取工作要求的年龄限制
+        age = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobAgeDiv"))
+        jobInfo.set_age(age)
+        # print(age)
+        # 获取工作的详细描述，职责要求
+        jobDes = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobDesDiv"))
+        jobInfo.set_jobDes(jobDes)
+        return jobInfo
+    @staticmethod
+    def getValue(text, patternJson):
+        """
+        通过网页源码以及某个工作字段的选择器json数组来获取工作的属性
+        :param text: 网页源码
+        :param patternJson: 某个工作字段的选择器json数组，比如 薪水的字段对应的选择器有三个，那么其对应的json字符串为 {"name1":value1,"name2":value2,"name3":value3}
+        :return: 返回某个字段的内容
+        """
+        for key in patternJson:
+            html = BeautifulSoup(text, "html.parser")
+            jobName = html.select_one(patternJson[key])
+            if not jobName is None:
+                return jobName.text
+        return ""

@@ -28,7 +28,7 @@ class WordCloudUtil:
             width=500,  # 图片宽度
             max_font_size=100,  # 字体最大值
             random_state=100,  # 配色方案的种类
-            font_path="C:\\Windows\\Fonts\\AdobeHeitiStd-Regular.otf",  # 不加这一句显示口字形乱码
+            font_path="static/font/AdobeHeitiStd-Regular.otf",  # 不加这一句显示口字形乱码
         )
         # 产生词云
         wc1.generate(text)
