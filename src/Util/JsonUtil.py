@@ -5,23 +5,6 @@ class JsonUtil:
     stc_fileAndImgPro = json.load(open(file="static/json/fileAndImgPro.json", mode="r", encoding="utf8"))
     stc_urlSettingPro = json.load(open(file="static/json/urlSettingPro.json", mode="r", encoding="utf8"))
 
-    @staticmethod
-    def transferObjectToJson(job):
-        """
-        将job对象的属性一一与json格式对应
-        :param job:
-        :return:
-        """
-        return {
-            "jobSalary": job.jobSalary,
-            "jobCity": job.jobCity,
-            "jobEdu": job.jobEdu,
-            "jobExperienceTime": job.jobExperienceTime,
-            "jobDes": job.jobDes,
-            "jobRequire": job.jobRequire,
-            "codeName": job.codeName,
-            "age": job.age
-        }
 
     @staticmethod
     def readFileToJson(jsonFilePath):
@@ -114,5 +97,28 @@ class JsonUtil:
                 jobListStr = jobListStr + '"codeName":"' + job.codeName + '"},'
         jsonstr = jsonstr + jobListStr + '}'
         jsonstr = jsonstr + ',"status":1}'
-        print(jsonstr)
+        # print(jsonstr)
         return jsonstr
+    @staticmethod
+    def listToJson(jobList):
+        """
+        将一个list转为json格式
+        :param jobList:
+        :return:
+        """
+        size = len(jobList)
+        jobListStr = '['
+        for index in range(size):
+            job = jobList[index]
+            jobListStr = jobListStr + '{"name":"' + job.jobName + '",'
+            jobListStr = jobListStr + '"city":"' + job.jobCity + '",'
+            jobListStr = jobListStr + '"edu":"' + job.jobEdu + '",'
+            jobListStr = jobListStr + '"salary":"' + str(job.jobSalary) + '",'
+            jobListStr = jobListStr + '"experienceTime":"' + job.jobExperienceTime + '",'
+            jobListStr = jobListStr + '"age":"' + job.age + '",'
+            if index == size - 1:
+                jobListStr = jobListStr + '"codeName":"' + job.codeName + '"}'
+            else:
+                jobListStr = jobListStr + '"codeName":"' + job.codeName + '"},'
+        jobListStr = jobListStr + ']'
+        return jobListStr

@@ -1,4 +1,5 @@
 import re
+import os
 
 
 class FileUtil:
@@ -19,6 +20,7 @@ class FileUtil:
         # 关闭文件资源
         file.close()
 
+
     @staticmethod
     def readFileToTex(textFilePath, ignoreWords):
         """
@@ -27,8 +29,32 @@ class FileUtil:
         :param ignoreWords: 要除去的词句的正则表达式
         :return:
         """
+
         # 特殊符号和部分无意义的词
         txt = open(textFilePath, encoding='utf-8').read()
         # 替换
         txt = re.sub(ignoreWords, " ", txt)
+        return txt
+
+    @staticmethod
+    def readDirFileToTex(textFileDirPath, ignoreWords):
+        """
+        将指定的文件夹的所有文本读取，然后使用正则表达式过滤掉不需要的词句
+        :param textFileDirPath: 存放文本文件的文件夹路径
+        :param ignoreWords: 要除去的词句的正则表达式
+        :return:
+        """
+        # 所有文件
+        fileList = []
+        # 返回一个列表，其中包含在目录条目的名称
+        fileNameList = os.listdir(textFileDirPath)
+        text = ''
+        # 逐个读取文件夹中的文件到文本中
+        for fileName in fileNameList:
+            filePath = textFileDirPath + '/' + fileName
+            if os.path.isfile(filePath):
+                # 添加文件
+                text = text + open(filePath, encoding='utf-8').read()
+        # 替换除去要忽略的词
+        txt = re.sub(ignoreWords, " ", text)
         return txt

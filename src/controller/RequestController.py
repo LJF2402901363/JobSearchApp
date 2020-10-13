@@ -17,7 +17,7 @@ def search():
     # 获市文本
     city = request.values.get("city")
     # 调用业务逻辑进行处理
-    jsonStr = requestService.search(searchContent, province, city)
+    jsonStr = requestService.handleSearchByThread(searchContent, province, city)
     return jsonStr
 
 
