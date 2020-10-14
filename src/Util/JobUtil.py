@@ -46,10 +46,12 @@ class JobUtil:
             if jobInfoLink.startswith("http"):
                 jobInfo = JobUtil.getJobInfo(jobInfoLink)
                 jobList.append(jobInfo)
+                jobInfo.printJobInfo()
             else:
                 # 有些job的URL是不完整的需要补充,比如：/a/21271755.shtml，则要补偿为： https://www.liepin.com/a/21271755.shtml
                 jobInfo = JobUtil.getJobInfo(JsonUtil.getUrlSettingProValueByKey("url") + jobInfoLink)
                 jobList.append(jobInfo)
+                jobInfo.printJobInfo()
         return jobList
     @staticmethod
     def getJobInfo(jobInfoUrl):

@@ -14,8 +14,9 @@ class ThreadUtil:
         :return: 返回工作集合
         """
         # 获取URL中对应的所有工作的具体信息
-        print("开始获取"+jobUrl+"的工作信息列表")
+        print("开始获取"+jobUrl+"的工作信息列表\n")
         jobList = JobUtil.getJobList(jobUrl)
+        print("完成获取" + jobUrl + "的工作信息列表\n")
         # 将list数组转换为json格式的数组
         jobListJsonStr = JsonUtil.listToJson(jobList)
         jobDesStr = JsonUtil.getJobListDesStr(jobList)

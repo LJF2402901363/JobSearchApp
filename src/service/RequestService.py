@@ -61,12 +61,12 @@ class RequestService:
         dqs = ''
         if proviceText == '' and cityText == '':
             dqs = ''
-        cityCode = JsonUtil.getCityMapingProValueByKey(cityText)
-        if cityCode == '':
-            return '{"status":0,"msg":"暂不支持搜索该城市哦"}'
         else:
-            dqs = cityCode
-
+            cityCode = JsonUtil.getCityMapingProValueByKey(cityText)
+            if cityCode == '':
+                return '{"status":0,"msg":"暂不支持搜索该城市哦"}'
+            else:
+                dqs = cityCode
 
         pageSize = JsonUtil.getUrlSettingProValueByKey("pageSize")
         searchUrl = JsonUtil.getUrlSettingProValueByKey("searchUrl")
@@ -83,7 +83,7 @@ class RequestService:
             obj_list = []
             for pageIndex in range(pageCount):
                 # 组装每页的职位URL
-                url = searchUrl + "?key=" + searchContent + "&dqs=" + dqs +"&&pageSize=" + str(pageSize) + "&curPage=" + str(pageIndex)
+                url = searchUrl + "?key=" + searchContent + "&dqs=" + dqs +"&pageSize=" + str(pageSize) + "&curPage=" + str(pageIndex)
                 # 每个URL对应一个线程进行处理
                 obj = t.submit(ThreadUtil.handleRequstByThread,url, textFilePathDir,searchContent + "-" + str(pageIndex))
                 print("开始" + url + "线程。。。。\n")

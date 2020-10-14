@@ -20,7 +20,7 @@ def search():
     # 这里使用多线程处理，调用业务逻辑进行处理
     # jsonStr = requestService.multiThreadHandleSearch(searchContent, province, city)
     # 使用单线程处理请求
-    jsonStr = requestService.singleThreadHandleSearch(searchContent, province, city)
+    jsonStr = requestService.multiThreadHandleSearch(searchContent, province, city)
     return jsonStr
 
 
