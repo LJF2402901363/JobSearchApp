@@ -118,13 +118,13 @@
                 "success": function (data) {
                     if (data.status == 1) {
                         chartsRender(data);
-                        alert("搜索完成！")
+                        alert(data.msg)
                           //修改词云图片
                             $("#imageFullScreen").attr("src", "../../" + data.data.wordCouldImg + "/?time=" + new Date().getTime())
                             $('#page').show();
                         reloadData(data.data.jobList);
                     }else{
-
+                        alert(data.msg)
                     }
                 },
                 "error": function () {
@@ -371,7 +371,6 @@ function reloadData(jobList) {
         function moveButtonClickHandler(e) {
             var pixelsToMoveOnX = 0;
             var pixelsToMoveOnY = 0;
-
             switch (e.target.id) {
                 case "leftPositionMap":
                     pixelsToMoveOnX = 50;

@@ -59,46 +59,57 @@ class RequestService:
            :return:
         """
         dqs = ''
-        if proviceText == '' and cityText == '':
+        if len(str(proviceText)) == 0 and len(str(cityText)) == 0:
             dqs = ''
         else:
             cityCode = JsonUtil.getCityMapingProValueByKey(cityText)
-            if cityCode == '':
+            proviceCode = JsonUtil.getCityMapingProValueByKey(proviceText)
+            if len(str(cityCode)) == 0 and len(str(proviceCode)) == 0:
                 return '{"status":0,"msg":"暂不支持搜索该城市哦"}'
             else:
-                dqs = cityCode
+                if len(str(cityCode)) != 0:
+                    dqs = cityCode
+                else:
+                    dqs = proviceCode
 
         pageSize = JsonUtil.getUrlSettingProValueByKey("pageSize")
         searchUrl = JsonUtil.getUrlSettingProValueByKey("searchUrl")
         # 读取文本文件的路径
         textFilePathDir = JsonUtil.getFileAndImgProValueByKey('textFilePathDir')
-        # 需要爬取的分页数，每个任务爬取一页
-        pageCount = JsonUtil.getUrlSettingProValueByKey("pageCount")
-        pageJobInfoList = []
         # 特殊符号和语句需要除去
         ignoreWords = JsonUtil.getFileAndImgProValueByKey('ignoreWords')
-        wordText = ''
-        # 使用多线程进行爬取数据
-        with ThreadPoolExecutor(max_workers=pageCount) as t:
-            obj_list = []
-            for pageIndex in range(pageCount):
-                # 组装每页的职位URL
-                url = searchUrl + "?key=" + searchContent + "&dqs=" + dqs +"&pageSize=" + str(pageSize) + "&curPage=" + str(pageIndex)
-                # 每个URL对应一个线程进行处理
-                obj = t.submit(ThreadUtil.handleRequstByThread,url, textFilePathDir,searchContent + "-" + str(pageIndex))
-                print("开始" + url + "线程。。。。\n")
-                obj_list.append(obj)
-            # pageJobInfoList
-            print("。。。。等待多线程完成。。。。\n")
-            for future in as_completed(obj_list):
-                jobList = future.result()
-                # 读取文件中的工作描述信息
-                wordText = JsonUtil.getJobListDesStr(jobList)
-                # 除去要忽略的词
-                wordText = re.sub(ignoreWords, " ", wordText)
-                print("读取" + url + "完成。。。。\n")
-                for job in jobList:
-                    pageJobInfoList.append(job)
+        # 需要爬取的分页数，每个任务爬取一页
+        pageCount = JsonUtil.getUrlSettingProValueByKey("pageCount")
+        preFileName = searchContent + "_" + dqs + "_"
+        wordText = FileUtil.readDesFileInDirToTex(textFilePathDir,preFileName,ignoreWords)
+        pageJobInfoList = []
+        if len(wordText) != 0:
+            pageJobInfoList = FileUtil.readJsonFileInDirToTex(textFilePathDir,preFileName,ignoreWords)
+        else:
+            # 使用多线程进行爬取数据
+            with ThreadPoolExecutor(max_workers=pageCount) as t:
+                obj_list = []
+                for pageIndex in range(pageCount):
+                    # 组装每页的职位URL
+                    url = searchUrl + "?key=" + searchContent + "&dqs=" + dqs + "&pageSize=" + str(
+                        pageSize) + "&curPage=" + str(pageIndex)
+                    # 每个URL对应一个线程进行处理
+                    # 拼接每个文件名： 搜索内容_城市编码_索引编号
+                    fileName = searchContent + "_" + dqs + "_" + str(pageIndex)
+                    obj = t.submit(ThreadUtil.handleRequstByThread, url, textFilePathDir, fileName)
+                    print("开始" + url + "线程。。。。\n")
+                    obj_list.append(obj)
+                # pageJobInfoList
+                print("。。。。等待多线程完成。。。。\n")
+                for future in as_completed(obj_list):
+                    jobList = future.result()
+                    # 读取文件中的工作描述信息
+                    wordText = JsonUtil.getJobListDesStr(jobList)
+                    # 除去要忽略的词
+                    wordText = re.sub(ignoreWords, " ", wordText)
+                    print("读取" + url + "完成。。。。\n")
+                    for job in jobList:
+                        pageJobInfoList.append(job)
         # 读取图片的路径
         smallImgPath = JsonUtil.getFileAndImgProValueByKey('wordCloudImg_small')
         # 读取背景图片的路径

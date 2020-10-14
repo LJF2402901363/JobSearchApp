@@ -38,13 +38,16 @@ class JsonUtil:
         return JsonUtil.stc_urlSettingPro[key]
 
     @staticmethod
-    def getCityMapingProValueByKey(key):
+    def getCityMapingProValueByKey(keyName):
         """
         通过key来获取json对应的value值
         :param key: json对象中的key
         :return:
         """
-        return JsonUtil.stc_urlSettingPro[key]
+        for jsonCity in JsonUtil.stc_cityMapingPro['citys']:
+            if jsonCity['name'] == keyName:
+                return jsonCity['value']
+        return ''
     @staticmethod
     def jsonStrToJson(jsonStr):
         """
@@ -100,6 +103,7 @@ class JsonUtil:
             jobListStr = jobListStr + '"edu":"' + job.jobEdu + '",'
             jobListStr = jobListStr + '"salary":"' + str(job.jobSalary) + '",'
             jobListStr = jobListStr + '"experienceTime":"' + job.jobExperienceTime + '",'
+            jobListStr = jobListStr + '"jobUrl":"' + job.jobUrl + '",'
             jobListStr = jobListStr + '"age":"' + job.age + '",'
             if index == size - 1:
                 jobListStr = jobListStr + '"codeName":"' + job.codeName + '"}'
@@ -107,7 +111,7 @@ class JsonUtil:
                 jobListStr = jobListStr + '"codeName":"' + job.codeName + '"},'
         jsonstr = jsonstr + jobListStr + ']'
         jsonstr = jsonstr + ',"wordCouldImg":"' + JsonUtil.getFileAndImgProValueByKey("wordCloudImg_small") + '"}'
-        jsonstr = jsonstr + ',"status":1}'
+        jsonstr = jsonstr + ',"status":1,"msg":"搜索完成！"}'
         # print(jsonstr)
         return jsonstr
 
@@ -128,7 +132,7 @@ class JsonUtil:
             jobListStr = jobListStr + '"salary":"' + str(job.jobSalary) + '",'
             jobListStr = jobListStr + '"experienceTime":"' + job.jobExperienceTime + '",'
             jobListStr = jobListStr + '"age":"' + job.age + '",'
-            # jobListStr = jobListStr + '"jobDes":"' + job.jobDes + '",'
+            jobListStr = jobListStr + '"jobUrl":"' + job.jobUrl + '",'
             if index == size - 1:
                 jobListStr = jobListStr + '"codeName":"' + job.codeName + '"}'
             else:

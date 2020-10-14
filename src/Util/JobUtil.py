@@ -46,12 +46,10 @@ class JobUtil:
             if jobInfoLink.startswith("http"):
                 jobInfo = JobUtil.getJobInfo(jobInfoLink)
                 jobList.append(jobInfo)
-                jobInfo.printJobInfo()
             else:
                 # 有些job的URL是不完整的需要补充,比如：/a/21271755.shtml，则要补偿为： https://www.liepin.com/a/21271755.shtml
                 jobInfo = JobUtil.getJobInfo(JsonUtil.getUrlSettingProValueByKey("url") + jobInfoLink)
                 jobList.append(jobInfo)
-                jobInfo.printJobInfo()
         return jobList
     @staticmethod
     def getJobInfo(jobInfoUrl):
@@ -62,7 +60,7 @@ class JobUtil:
         """
         # 实例化对象
         jobInfo = JobInfo()
-
+        # 设置该工作的URL
         jobInfo.set_jobUrl(jobInfoUrl)
         # 获取工作URL详细的信息的网页源码
         html_tex = JobUtil.getHtmlTex(jobInfoUrl)
@@ -72,8 +70,7 @@ class JobUtil:
         # print(jobName)
         # 获取薪水
         salary = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobSalaryDiv"))
-        salary = salary.rstrip()
-        jobInfo.set_jobSalary(salary)
+        jobInfo.set_jobSalary(salary.strip())
         # print(salary)
         # 获取公司名称
         jobCompanyName = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobCompanyNameDiv"))
@@ -103,7 +100,6 @@ class JobUtil:
         jobDes = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobDesDiv"))
         jobDes = jobDes.replace(' ','').replace('\\','\\\\')
         # print(jobDes)
-
         jobInfo.set_jobDes(jobDes)
         return jobInfo
     @staticmethod
