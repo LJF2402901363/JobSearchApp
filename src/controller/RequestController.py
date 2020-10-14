@@ -5,6 +5,7 @@ from service.RequestService import RequestService
 app = Flask(__name__)
 # 解决跨域请求资源被拦截问题
 CORS(app, supports_credentials=True, resources=r"/*")
+# 业务逻辑对象。
 requestService = RequestService()
 
 
@@ -16,8 +17,10 @@ def search():
     province = request.values.get("province")
     # 获市文本
     city = request.values.get("city")
-    # 调用业务逻辑进行处理
-    jsonStr = requestService.handleSearchByThread(searchContent, province, city)
+    # 这里使用多线程处理，调用业务逻辑进行处理
+    # jsonStr = requestService.multiThreadHandleSearch(searchContent, province, city)
+    # 使用单线程处理请求
+    jsonStr = requestService.singleThreadHandleSearch(searchContent, province, city)
     return jsonStr
 
 

@@ -2,10 +2,12 @@ import json
 
 
 class JsonUtil:
+    # 加载fileAndImgPro.json配置文件
     stc_fileAndImgPro = json.load(open(file="static/json/fileAndImgPro.json", mode="r", encoding="utf8"))
+    # 加载urlSettingPro.json配置文件
     stc_urlSettingPro = json.load(open(file="static/json/urlSettingPro.json", mode="r", encoding="utf8"))
-
-
+    # 加载cityMapingJson.json配置文件
+    stc_cityMapingPro = json.load(open(file="static/json/cityMapingJson.json", mode="r", encoding="utf8"))
     @staticmethod
     def readFileToJson(jsonFilePath):
         """
@@ -36,6 +38,14 @@ class JsonUtil:
         return JsonUtil.stc_urlSettingPro[key]
 
     @staticmethod
+    def getCityMapingProValueByKey(key):
+        """
+        通过key来获取json对应的value值
+        :param key: json对象中的key
+        :return:
+        """
+        return JsonUtil.stc_urlSettingPro[key]
+    @staticmethod
     def jsonStrToJson(jsonStr):
         """
         将json字符串转化为json对象
@@ -45,7 +55,7 @@ class JsonUtil:
         return json.loads(jsonStr)
 
     @staticmethod
-    def jsonListToViewJson(jsonObj,jobList):
+    def jsonListToViewJson(jsonObj, jobList):
         """
         将一个json对象转换为符合前端页面展示数据的json字符串
         格式：
@@ -88,17 +98,19 @@ class JsonUtil:
             jobListStr = jobListStr + '{"name":"' + job.jobName + '",'
             jobListStr = jobListStr + '"city":"' + job.jobCity + '",'
             jobListStr = jobListStr + '"edu":"' + job.jobEdu + '",'
-            jobListStr = jobListStr + '"salary":"' + str(1000) + '",'
+            jobListStr = jobListStr + '"salary":"' + str(job.jobSalary) + '",'
             jobListStr = jobListStr + '"experienceTime":"' + job.jobExperienceTime + '",'
             jobListStr = jobListStr + '"age":"' + job.age + '",'
             if index == size - 1:
-                jobListStr = jobListStr + '"codeName":"' + job.codeName + '"}]'
+                jobListStr = jobListStr + '"codeName":"' + job.codeName + '"}'
             else:
                 jobListStr = jobListStr + '"codeName":"' + job.codeName + '"},'
-        jsonstr = jsonstr + jobListStr + '}'
+        jsonstr = jsonstr + jobListStr + ']'
+        jsonstr = jsonstr + ',"wordCouldImg":"' + JsonUtil.getFileAndImgProValueByKey("wordCloudImg_small") + '"}'
         jsonstr = jsonstr + ',"status":1}'
         # print(jsonstr)
         return jsonstr
+
     @staticmethod
     def listToJson(jobList):
         """
@@ -116,9 +128,22 @@ class JsonUtil:
             jobListStr = jobListStr + '"salary":"' + str(job.jobSalary) + '",'
             jobListStr = jobListStr + '"experienceTime":"' + job.jobExperienceTime + '",'
             jobListStr = jobListStr + '"age":"' + job.age + '",'
+            # jobListStr = jobListStr + '"jobDes":"' + job.jobDes + '",'
             if index == size - 1:
                 jobListStr = jobListStr + '"codeName":"' + job.codeName + '"}'
             else:
                 jobListStr = jobListStr + '"codeName":"' + job.codeName + '"},'
         jobListStr = jobListStr + ']'
         return jobListStr
+
+    @staticmethod
+    def getJobListDesStr(jobList):
+        """
+        获取jobList中岗位要求的全部字符串
+        :param jobList: 包含岗位集合的list
+        :return:
+        """
+        jobListDesStr = ''
+        for job in jobList:
+            jobListDesStr = jobListDesStr + job.jobDes
+        return jobListDesStr

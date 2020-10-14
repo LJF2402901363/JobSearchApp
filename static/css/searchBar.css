@@ -1,16 +1,10 @@
- #searchInputId {
-	width: 150px;
-	height: 25px;
-}
 
-#searchBtnId {
-	height: 30px;
-	/*alignment: center;*/
+#searchInputId{
+	width: 200px;
+	/*margin-left:30%;*/
 }
-#searchFormId{
-	width: 600px;
-	height: 25px;
-	/*alignment: center;*/
+#searchBtnId{
+	margin-left: 0px;
 }
 #province,#city{
 	height: 30px;
@@ -28,4 +22,8 @@
 }
 .input-group{
 	margin-top: 10px;
+}
+.table-demo {
+	width: 80%;
+	margin: 30px auto 0px auto;
 }

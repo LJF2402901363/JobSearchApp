@@ -7,7 +7,6 @@ from Util.JsonUtil import JsonUtil
 
 class JobUtil:
     stc_urlSettingPro = JsonUtil.stc_urlSettingPro
-
     @staticmethod
     def getHtmlTex(url):
         """
@@ -17,6 +16,7 @@ class JobUtil:
         """
         # 生成随机请求头
         header = {"User-Agent": UserAgent().random}
+
         # 获取请求内容
         response = requests.get(url=url, headers=header)
         # 判定是否成功获取
@@ -66,7 +66,7 @@ class JobUtil:
         html_tex = JobUtil.getHtmlTex(jobInfoUrl)
         # 获取工作名称
         jobName = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobNameDiv"))
-        jobInfo.set_jobName(jobName)
+        jobInfo.set_jobName(jobName.replace('"',''))
         # print(jobName)
         # 获取薪水
         salary = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobSalaryDiv"))
@@ -75,30 +75,33 @@ class JobUtil:
         # print(salary)
         # 获取公司名称
         jobCompanyName = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobCompanyNameDiv"))
-        jobInfo.set_companyName(jobCompanyName)
+        jobInfo.set_companyName(jobCompanyName.strip())
         # print(jobCompanyName)
         # 获取工作所在城市
         city = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobCityDiv"))
-        jobInfo.set_jobCity(city)
+        jobInfo.set_jobCity(city.strip())
         # print(city)
         # 获取工作要求的文凭
         edu = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobEduDiv"))
-        jobInfo.set_jobEdu(edu)
+        jobInfo.set_jobEdu(edu.strip())
         # print(edu)
         # 获取工作经验年长
         jobExperienceTime = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobExperienceTimeDiv"))
         # print(jobExperienceTime)
-        jobInfo.set_jobExperienceTime(jobExperienceTime)
+        jobInfo.set_jobExperienceTime(jobExperienceTime.strip())
         # 获取需要经过的编程语言
         codeName = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobCodeNameDiv"))
         # print(codeName)
-        jobInfo.set_codeName(codeName)
+        jobInfo.set_codeName(codeName.strip())
         # 获取工作要求的年龄限制
         age = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobAgeDiv"))
-        jobInfo.set_age(age)
+        jobInfo.set_age(age.strip())
         # print(age)
         # 获取工作的详细描述，职责要求
         jobDes = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobDesDiv"))
+        jobDes = jobDes.replace(' ','').replace('\\','\\\\')
+        # print(jobDes)
+
         jobInfo.set_jobDes(jobDes)
         return jobInfo
     @staticmethod

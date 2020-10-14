@@ -44,8 +44,6 @@ class FileUtil:
         :param ignoreWords: 要除去的词句的正则表达式
         :return:
         """
-        # 所有文件
-        fileList = []
         # 返回一个列表，其中包含在目录条目的名称
         fileNameList = os.listdir(textFileDirPath)
         text = ''

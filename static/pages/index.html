@@ -6,19 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>职位数据分析</title>
     <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet"  href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <link rel="stylesheet" href="../css/searchBar.css"/>
-    <link rel="stylesheet" href="../css/bootstrap.min.css"/>
     <link rel="shortcut icon" href="/favicon.ico"/>
     <link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
+
+ <link href="http://www.itxst.com/package/bootstrap-table-1.14.1/bootstrap-4.3.1/css/bootstrap.css" rel="stylesheet" />
+   <link href="http://www.itxst.com/package/bootstrap-table-1.14.1/bootstrap-table-1.14.1/bootstrap-table.css" rel="stylesheet" />
     <!-- jQuery -->
-    <script src="../js/jquery.min.js"></script>
+     <script src="../js/jquery.min.js"></script>
     <script src="../js/echarts.min.js"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="../js/bootstrap.min.js"></script>
     <script src="../js/distpicker.min.js"></script>
-    <link rel="stylesheet" href="../css/styles.css" type="text/css"/>
     <script src="../js/e-smart-zoom-jquery.min.js"></script>
+    <script src="../js/bootstrap-table.min.js"></script>
+
 </head>
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
@@ -33,39 +36,48 @@
                 <button id="resetBtnId" type="button" class="btn btn-danger">重置</button>
             </div>
         </div>
-       <div align="center">
-            <form id="searchFormId" class="bs-example bs-example-form" role="form" >
-            <div class="row" >
-                <div class="col-lg-6" >
-                    <div class="input-group">
-                        <input id="searchInputId" name="searchContent" type="text" class="form-control"
-                               placeholder="输入关键字搜索">
-                        <span class="input-group-btn">
-									<button id="searchBtnId" class="btn btn-default" type="button">搜索</button>
-								</span>
-                    </div><!-- /input-group -->
-                </div><!-- /.col-lg-6 -->
-            </div><!-- /.row -->
-        </form>
-       </div>
+        <div>
+            <form id="searchFormId" class="bs-example bs-example-form" role="form">
+                <div class="row">
+                    <div class="col-lg-6" style="margin-left: 25%">
+                        <div class="input-group">
+                            <input id="searchInputId" name="searchContent" type="text" class="form-control"
+                                   placeholder="输入关键字搜索">
+                            <button id="searchBtnId" class="btn btn-default" type="button">搜索</button>
+                        </div><!-- /input-group -->
+                    </div><!-- /.col-lg-6 -->
+                </div><!-- /.row -->
+            </form>
+        </div>
     </div>
     <!--词云图-->
-<div id="page" align="center" >
-    <div id="pageContent" align="center" style="height: 550px;width: 640px;margin-bottom: 100px">
-        <img id="imageFullScreen" src="../img/small.jpg"/>
-    </div>
-    <div id="positionButtonDiv" style="margin-left: 0px">
-        <p> 缩放
-            <span>
+    <div id="page" align="center" style="width:1000px;height: 300px">
+        <div id="pageContent" align="center" style="height: 450px;width: 640px;">
+            <img id="imageFullScreen" src="../img/small.jpg"/>
+        </div>
+        <div id="positionButtonDiv" style="margin-left: 0px">
+            <p> 缩放
+                <span>
 			    <img id="zoomInButton" class="zoomButton" src="../img/zoomIn.png" title="zoom in" alt="放大"/>
 			    <img id="zoomOutButton" class="zoomButton" src="../img/zoomOut.png" title="zoom out" alt="缩小"/>
 			</span>
-        </p>
+            </p>
 
+        </div>
     </div>
-</div>
-<!-- 条形图  -->
-<div id="barChart" style="height:500px;margin-top:500px;" align="center"></div>
+    <!-- 条形图  -->
+    <div id="barChart" style="height:500px;margin-top:500px;" align="center"></div>
+   <!--表格数据-->
+    <div class="table-demo">
+			<table id="table"></table>
+		</div>
+
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+    </div>
 </div>
 
 <!-- ./wrapper -->
@@ -75,7 +87,6 @@
     $(function () {
         var defaultProvice = '---- 所在省 ----';
         var defaultCity = '---- 所在市 ----';
-
         //初始话省份和市
         $('#distpicker').distpicker({
             province: defaultProvice,
@@ -98,11 +109,6 @@
                 alert("请输入搜索内容！")
                 return
             }
-
-            function fu(data) {
-                alert(data.status)
-            }
-
             //发送ajax给服务器
             $.ajax({
                 "url": "http://127.0.0.1:5000/search",
@@ -113,19 +119,24 @@
                     if (data.status == 1) {
                         chartsRender(data);
                         alert("搜索完成！")
-                        $.getJSON("../json/fileAndImgPro.json", function (jsondata) {
-                            $("#imageFullScreen").attr("src", "../../" + jsondata['wordCloudImg_small'] + "/?time=" + new Date().getTime())
+                          //修改词云图片
+                            $("#imageFullScreen").attr("src", "../../" + data.data.wordCouldImg + "/?time=" + new Date().getTime())
                             $('#page').show();
-                        })
+                        reloadData(data.data.jobList);
+                    }else{
 
                     }
                 },
                 "error": function () {
                     alert("搜索失败！");
-                //    $('#page').hide();
+                    $('#page').hide();
+                     $(".table-demo").hide();
                 }
             })
         })
+
+
+        $('#page').hide();
     })
 
     <!--渲染条状图和饼状图-->
@@ -136,7 +147,7 @@
         var jsonList = data.data.words;
         let sumValue = 0;
         let pieDataValues = [];
-         $.each(jsonList, function (index, value) {
+        $.each(jsonList, function (index, value) {
             dataName.push(value.name);
             dataValue.push(value.value)
         })
@@ -149,92 +160,168 @@
         option = {
             title: {
                 text: '搜索职位数据分析',
-                align:'center',
+                align: 'center',
                 top: '5',
                 left: '50',
                 textStyle: {
                     fontSize: 20,
                     fontStyle: "italic",
                     color: "rgba(15, 16, 15, 1)"
-                }},
-                tooltip: {},
-                legend: {
-                data:dataName,
-                    orient: "vertical",
-                    left: "center",
-                    name:"饼状图",
-                   type: "scroll",
-                    data: ['top10'],
-                    itemGap: 18.5,
-                    top :40,
-                    textStyle: {
-                        color: "rgba(8, 8, 8, 1)",
-                        fontWeight: "bold",
-                        fontSize: 13,
-                        fontStyle: "italic"
+                }
+            },
+            tooltip: {},
+            legend: {
+                data: dataName,
+                orient: "vertical",
+                left: "center",
+                name: "饼状图",
+                type: "scroll",
+                data: ['top10'],
+                itemGap: 18.5,
+                top: 40,
+                textStyle: {
+                    color: "rgba(8, 8, 8, 1)",
+                    fontWeight: "bold",
+                    fontSize: 13,
+                    fontStyle: "italic"
+                }
+            },
+            grid: [{
+                x: '7%',
+                y: '15%',
+                width: '38%',
+                height: '38%'
+            },],
+            xAxis: [{
+                gridIndex: 0,
+                data: dataName
+            }],
+            yAxis: [{
+                gridIndex: 0
+            }],
+            series: [{
+                name: 'top10柱状图',
+                type: 'bar',
+                data: dataValue,
+                itemStyle: {
+                    normal: {
+                        color: function (param) {
+                            let r = Math.floor(Math.random() * 255);
+                            let g = Math.floor(Math.random() * 255);
+                            let b = Math.floor(Math.random() * 255);
+                            let color = 'rgba(' + r + ',' + g + ',' + b + ',0.8)';
+                            return color;
+                        }
                     }
                 },
-                grid: [{
-                    x: '7%',
-                    y: '15%',
-                    width: '38%',
-                    height: '38%'
-                },],
-                xAxis: [{
-                    gridIndex: 0,
-                    data: dataName
-                }],
-                yAxis: [{
-                    gridIndex: 0
-                }],
-                series: [{
-                    name: 'top10柱状图',
-                    type: 'bar',
-                    data: dataValue,
-                    itemStyle: {
-                        normal: {
-                            color: function (param) {
-                                let  r = Math.floor(Math.random() * 255);
-                                let  g = Math.floor(Math.random() * 255);
-                                let  b = Math.floor(Math.random() * 255);
-                                let color = 'rgba(' + r + ',' +g + ',' + b + ',0.8)';
-                                return color;
-                            }
-                        }
-                    },
+                label: {
+                    fontStyle: "italic",
+                    fontWeight: "bold",
+                    fontSize: 14
+                }
+            },
+                {
+
+                    type: 'pie',
+                    name: 'top10饼状图',
+                    data: jsonList,
+                    radius: '40%',
+                    center: ['70%', '30%'],
                     label: {
                         fontStyle: "italic",
                         fontWeight: "bold",
-                        fontSize: 14
-                    }
-                },
-                    {
-
-                        type: 'pie',
-                        name: 'top10饼状图',
-                        data: jsonList,
-                        radius: '40%',
-                        center: ['70%', '30%'],
-                        label: {
-                            fontStyle: "italic",
-                            fontWeight: "bold",
-                            fontSize: 14,
-                            normal:{
-                                show:true,
-                                position:'outside', //标签的位置
-                                textStyle : {
-                                    fontWeight : 300 ,
-                                    fontSize : 16    //文字的字体大小
-                                },
-                                formatter: '{b} : {c} ({d}%)'
-                            }
+                        fontSize: 14,
+                        normal: {
+                            show: true,
+                            position: 'outside', //标签的位置
+                            textStyle: {
+                                fontWeight: 300,
+                                fontSize: 16    //文字的字体大小
+                            },
+                            formatter: '{b} : {c} ({d}%)'
                         }
                     }
-                ]
-            };
+                }
+            ]
+        };
 
-            pieChart.setOption(option);
-        }
+        pieChart.setOption(option);
+
+    }
+
+
+</script>
+<script>
+    $(function () {
+        //设置需要显示的列
+			var columns = [{
+				field: 'Id',
+				title: '编号',
+                formatter:function(value,row,index){
+                //return index+1; //序号正序排序从1开始
+                var pageSize=$('#table').bootstrapTable('getOptions').pageSize;//通过表的#id 可以得到每页多少条
+                var pageNumber=$('#table').bootstrapTable('getOptions').pageNumber;//通过表的#id 可以得到当前第几页
+                return pageSize * (pageNumber - 1) + index + 1;    //返回每条的序号： 每页条数 * （当前页 - 1 ）+ 序号
+            }
+			}, {
+				field: 'name',
+				title: '职位名'
+			}, {
+				field: 'city',
+				title: '城市'
+			}, {
+				field: 'salary',
+				title: '薪水'
+			}, {
+				field: 'age',
+				title: '年龄'
+			}, {
+				field: 'experienceTime',
+				title: '工作经验年长'
+			}, {
+				field: 'codeName',
+				title: '语言'
+			}, {
+				field: 'edu',
+				title: '学历要求'
+			}, ];
+          var jobList = [];
+         //bootstrap table初始化数据
+			$('#table').bootstrapTable({
+				columns: columns,
+				data: jobList,
+				//******前端分页设置****
+				pagination: true,
+				pageNumber: 1,
+				pageSize: 10,
+				pageList: "[10, 20, 50, 200]",
+				paginationHAlign: "left",
+				paginationDetailHAlign: "right",
+				search: true, //******开启搜索框****//
+				searchOnEnterKey: true, //******回车后执行搜索****//
+                showColumns:true,//显示列刷选
+                 searchAlign:"right",
+                 smartDisplay:true,
+                rowAttributes: function (row, index) {
+                return {
+                    'data-toggle': 'popover',
+                    'data-placement': 'bottom',
+                    'data-trigger': 'hover',
+                    'data-index': index,
+                    'title': [
+                        'Index: ' + index,
+                        '职位名: ' + row.name
+                    ].join(', ')
+                }
+            }
+			});
+          $(".table-demo").hide();
+    }
+    )
+function reloadData(jobList) {
+        $('#table').bootstrapTable('load', jobList);
+         $(".table-demo").show();
+  }
 
 </script>
 <!--缩放模块-->
@@ -303,7 +390,9 @@
         }
 
         // $('#page').hide();
+
     });
+
 </script>
 </body>
 </html>
