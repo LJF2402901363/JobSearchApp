@@ -1,5 +1,7 @@
 import json
 
+from domain.JobInfo import JobInfo
+
 
 class JsonUtil:
     # 加载fileAndImgPro.json配置文件
@@ -119,8 +121,8 @@ class JsonUtil:
     def listToJson(jobList):
         """
         将一个list转为json格式
-        :param jobList:
-        :return:
+        :param jobList:工作集合
+        :return:返回工作信息的json格式字符串
         """
         size = len(jobList)
         jobListStr = '['
@@ -151,3 +153,31 @@ class JsonUtil:
         for job in jobList:
             jobListDesStr = jobListDesStr + job.jobDes
         return jobListDesStr
+    @staticmethod
+    def readJsonFileToList(filePath):
+        # 获取json格式的job信息集合
+        jobJsonArray = json.load(open(file=filePath, encoding='utf-8'))
+        # 用户保存工作对象的集合
+        jobList = []
+        for jobJson in jobJsonArray:
+            # {"name":"Java后端高级开发工程师","city":"成都","edu":"本科及以上","salary":"12-18k·13薪",
+            # "experienceTime":"3-5年","age":"年龄不限","codeName":"语言不限"}
+            jobName = jobJson['name']
+            jobCity = jobJson['city']
+            jobEdu = jobJson['edu']
+            jobSalary = jobJson['salary']
+            jobExperienceTime = jobJson['experienceTime']
+            jobAge = jobJson['age']
+            jobCodeName = jobJson['codeName']
+            jobUrl = jobJson['jobUrl']
+            job = JobInfo()
+            job.set_age(jobAge)
+            job.set_jobEdu(jobEdu)
+            job.set_jobCity(jobCity)
+            job.set_jobExperienceTime(jobExperienceTime)
+            job.set_codeName(jobCodeName)
+            job.set_jobSalary(jobSalary)
+            job.set_jobName(jobName)
+            job.set_jobUrl(jobUrl)
+            jobList.append(job)
+        return  jobList

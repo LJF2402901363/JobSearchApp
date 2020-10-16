@@ -2,7 +2,7 @@ import re
 import os
 import json
 from domain.JobInfo import JobInfo
-
+from Util.JsonUtil import JsonUtil
 class FileUtil:
     @staticmethod
     def saveTextToFile(text, filePath):
@@ -85,28 +85,9 @@ class FileUtil:
                 filePath = jsonFileDirPath + '/' + fileName
                 # 判断是否是文件
                 if os.path.isfile(filePath):
-                    # 获取json格式的job信息集合
-                    jobJsonArray = json.load(open(file=filePath, encoding='utf-8'))
-                    for jobJson in jobJsonArray:
-                        # {"name":"Java后端高级开发工程师","city":"成都","edu":"本科及以上","salary":"12-18k·13薪",
-                        # "experienceTime":"3-5年","age":"年龄不限","codeName":"语言不限"}
-                        jobName = jobJson['name']
-                        jobCity = jobJson['city']
-                        jobEdu = jobJson['edu']
-                        jobSalary = jobJson['salary']
-                        jobExperienceTime = jobJson['experienceTime']
-                        jobAge = jobJson['age']
-                        jobCodeName = jobJson['codeName']
-                        jobUrl = jobJson['jobUrl']
-                        job = JobInfo()
-                        job.set_age(jobAge)
-                        job.set_jobEdu(jobEdu)
-                        job.set_jobCity(jobCity)
-                        job.set_jobExperienceTime(jobExperienceTime)
-                        job.set_codeName(jobCodeName)
-                        job.set_jobSalary(jobSalary)
-                        job.set_jobName(jobName)
-                        job.set_jobUrl(jobUrl)
+                    # 获取该json文件下对应的Job数组
+                    pageJobList = JsonUtil.readJsonFileToList(filePath)
+                    # 将每个工作添加到jobList中
+                    for job in pageJobList:
                         jobList.append(job)
-
         return jobList
