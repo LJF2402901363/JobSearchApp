@@ -3,7 +3,6 @@
    "wordCloudImg_small":"static/img/small.jpg",
    "wordCloudBgImg":"static/img/wordCloudBg.png",
    "ignoreWords":"[\",\"\".\"\"。\"\"?\"\"？\"\"’\"\"‘\"\"'\"\"”\"\"“\"\"【\"\"】\"\"{\"\"}\"\"｛\"\"｝\"\"：\"\":\"\"、\"\"任职要求\"\"任职要求1\"\"职位描述\"\"职位描述1\"\"岗位职责\"\"工作职责\"\\d]",
-   "textFilePath": "static/file/wordText.txt",
-    "textFilePathDir": "static/file",
+   "textFilePathDir": "static/file",
    "newWords": "[{\"word\":\"天天学习\",\"freq\":4},{\"word\":\"机器学习\",  \"freq\":3},{\"word\":\"数据挖掘\",\"freq\":5},{\"word\":\"熟悉算法\",\"freq\":4}]"
 }
