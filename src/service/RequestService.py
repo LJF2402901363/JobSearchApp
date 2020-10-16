@@ -52,11 +52,12 @@ class RequestService:
             # 或名该搜索已经缓存到本地,开始读取
             jobDesText = FileUtil.readFileToTex(textDesFilePath,ignoreWords)
             # 拼接所有工作信息json格式的文件名
-            jobJsonFilePath = textFileDirPath + "/" + searchContent + "_" + dqs + ".txt"
+            jobJsonFilePath = textFileDirPath + "/" + searchContent + "_" + dqs + ".json"
             # 读取json对应文件中的job数组
             jobList = JsonUtil.readJsonFileToList(jobJsonFilePath)
         else:
             for i in range(pageCount):
+                print("开始爬取第" + str(i + 1) + "页数据\n")
                 # 组装每页的职位URL
                 url = searchUrl + "?key=" + searchContent + "&dqs=" + dqs + "&pageSize=" + str(
                     pageSize) + "&curPage=" + str(i)
@@ -65,6 +66,7 @@ class RequestService:
                 # 将获取的职位集合都保存到jobList
                 for job in pageJobList:
                     jobList.append(job)
+                print("爬取第" + str(i + 1) + "页数据完成。。\n")
             # 所有工作岗位描述的文本内容
             jobDesText = JsonUtil.getJobListDesStr(jobList)
             # 拼接文件格名以txt格式保存,全部职位信息的要求都保存到同一个文件中去

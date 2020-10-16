@@ -21,9 +21,10 @@
     <script src="../js/distpicker.min.js"></script>
     <script src="../js/e-smart-zoom-jquery.min.js"></script>
     <script src="../js/bootstrap-table.min.js"></script>
-
+     <script type="text/javascript" src="../js/spin.min.js" ></script>
 </head>
 <body class="hold-transition sidebar-mini">
+
 <div class="wrapper">
 
     <!-- 搜索框 -->
@@ -50,25 +51,21 @@
             </form>
         </div>
     </div>
-    <!--词云图-->
-    <div id="page" align="center" style="width:1000px;height: 300px">
-        <div id="pageContent" align="center" style="height: 450px;width: 640px;">
-            <img id="imageFullScreen" src="../img/small.jpg"/>
+    <!--加载中-->
+        <div id="Div" align="center">
+            <div id="firstDiv" align="center">
+            </div>
         </div>
-        <div id="positionButtonDiv" style="margin-left: 0px">
-            <p> 缩放
-                <span>
-			    <img id="zoomInButton" class="zoomButton" src="../img/zoomIn.png" title="zoom in" alt="放大"/>
-			    <img id="zoomOutButton" class="zoomButton" src="../img/zoomOut.png" title="zoom out" alt="缩小"/>
-			</span>
-            </p>
-
+    <!--词云图-->
+    <div id="page" align="center" >
+        <div id="pageContent" align="center" >
+            <img id="imageFullScreen" src="../img/small.jpg"/>
         </div>
     </div>
     <!-- 条形图  -->
-    <div id="barChart" style="height:500px;margin-top:500px;" align="center"></div>
+    <div id="barChart" style="height:500px;margin-top:0px;" align="center"></div>
    <!--表格数据-->
-    <div class="table-demo">
+    <div class="table-demo" style="margin-top:0px;">
 			<table id="table"></table>
 		</div>
 
@@ -110,6 +107,8 @@
                 return
             }
             //发送ajax给服务器
+            <!--展示加载中-->
+            showLoading();
             $.ajax({
                 "url": "http://127.0.0.1:5000/search",
                 "data": {'searchContent': searchContent, 'province': province, 'city': city},
@@ -117,26 +116,66 @@
                 "type": "post",
                 "success": function (data) {
                     if (data.status == 1) {
+                        <!--关闭加载中-->
+                        closeLoading();
                         chartsRender(data);
                         alert(data.msg)
-                          //修改词云图片
-                            $("#imageFullScreen").attr("src", "../../" + data.data.wordCouldImg + "/?time=" + new Date().getTime())
-                            $('#page').show();
+                        //修改词云图片
+                        $("#imageFullScreen").attr("src", "../../" + data.data.wordCouldImg + "/?time=" + new Date().getTime())
+                        $('#page').show();
                         reloadData(data.data.jobList);
+
                     }else{
-                        alert(data.msg)
+                         <!--关闭加载中-->
+                        closeLoading();
+                        alert(data.msg);
+                        $('#page').hide();
+                        $(".table-demo").hide();
+
+                        $("#barChart").hide();
+
                     }
                 },
                 "error": function () {
+                    <!--关闭加载中-->
+                    closeLoading();
                     alert("搜索失败！");
                     $('#page').hide();
-                     $(".table-demo").hide();
+                    $(".table-demo").hide();
+                    $("#barChart").hide();
                 }
             })
         })
-
-
         $('#page').hide();
+           var opts = {
+                lines: 13, // 花瓣数目
+                length: 20, // 花瓣长度
+                width: 10, // 花瓣宽度
+                radius: 30, // 花瓣距中心半径
+                corners: 1, // 花瓣圆滑度 (0-1)
+                rotate: 0, // 花瓣旋转角度
+                direction: 1, // 花瓣旋转方向 1: 顺时针, -1: 逆时针
+                color: '#28bda0', // 花瓣颜色
+                speed: 1, // 花瓣旋转速度
+                trail: 60, // 花瓣旋转时的拖影(百分比)
+                shadow: false, // 花瓣是否显示阴影
+                hwaccel: false, //spinner 是否启用硬件加速及高速旋转
+                className: 'spinner', // spinner css 样式名称
+                zIndex: 2e9, // spinner的z轴 (默认是2000000000)
+                top: '25%', // spinner 相对父容器Top定位 单位 px
+                left: '50%'// spinner 相对父容器Left定位 单位 px
+            };
+            var spinner = new Spinner(opts);
+             function showLoading(){
+                //请求时spinner出现
+                var target = $("#firstDiv").get(0);
+                spinner.spin(target);
+            }
+
+            function closeLoading(){
+                //关闭spinner
+                spinner.spin();
+            }
     })
 
     <!--渲染条状图和饼状图-->
@@ -322,75 +361,6 @@ function reloadData(jobList) {
         $('#table').bootstrapTable('load', jobList);
          $(".table-demo").show();
   }
-
-</script>
-<!--缩放模块-->
-<script>
-    $(document).ready(function () {
-        // 获取图片真实高度
-        function getImageWidth(url, callback) {
-            var img = new Image();
-            img.src = url;
-            // 如果图片被缓存，则直接返回缓存数据
-            if (img.complete) {
-                callback(img.width, img.height);
-            } else {
-                img.onload = function () {
-                    callback(img.width, img.height);
-                }
-            }
-        }
-
-        var imgSrc = $("#imageFullScreen").attr("src");
-        getImageWidth(imgSrc, function (w, h) {
-            //  {#alert("width:"+w+",height:"+h)#}
-            $('#imageFullScreen').smartZoom({
-                'containerClass': 'zoomableContainer',
-                'top': '30',
-                'left': '10',
-                'bottom': '0',
-                'right': '5',
-                'width': w + 60,
-                'height': h,
-                'containerBackground': '#9db699'
-
-            });
-        });
-
-
-        $('#topPositionMap,#leftPositionMap,#rightPositionMap,#bottomPositionMap').bind("click", moveButtonClickHandler);
-        $('#zoomInButton,#zoomOutButton').bind("click", zoomButtonClickHandler);
-
-        function zoomButtonClickHandler(e) {
-            var scaleToAdd = 0.8;
-            if (e.target.id == 'zoomOutButton')
-                scaleToAdd = -scaleToAdd;
-            $('#imageFullScreen').smartZoom('zoom', scaleToAdd);
-        }
-
-        function moveButtonClickHandler(e) {
-            var pixelsToMoveOnX = 0;
-            var pixelsToMoveOnY = 0;
-            switch (e.target.id) {
-                case "leftPositionMap":
-                    pixelsToMoveOnX = 50;
-                    break;
-                case "rightPositionMap":
-                    pixelsToMoveOnX = -50;
-                    break;
-                case "topPositionMap":
-                    pixelsToMoveOnY = 50;
-                    break;
-                case "bottomPositionMap":
-                    pixelsToMoveOnY = -50;
-                    break;
-            }
-
-        }
-
-        // $('#page').hide();
-
-    });
 
 </script>
 </body>
