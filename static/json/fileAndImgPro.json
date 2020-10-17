@@ -1,6 +1,6 @@
 {
 
-   "wordCloudImg_small":"static/img/small.jpg",
+   "wordCloudImg":"static/img/small.jpg",
    "wordCloudBgImg":"static/img/wordCloudBg.png",
    "ignoreWords":"[\",\"\".\"\"。\"\"?\"\"？\"\"’\"\"‘\"\"'\"\"”\"\"“\"\"【\"\"】\"\"{\"\"}\"\"｛\"\"｝\"\"：\"\":\"\"、\"\"任职要求\"\"任职要求1\"\"职位描述\"\"职位描述1\"\"岗位职责\"\"工作职责\"\\d]",
    "textFilePathDir": "static/file",

@@ -51,7 +51,7 @@
             </form>
         </div>
     </div>
-    <!--加载中-->
+    <!--加载中动画框-->
         <div id="Div" align="center">
             <div id="firstDiv" align="center">
             </div>
@@ -74,7 +74,6 @@
             <!-- Control sidebar content goes here -->
         </aside>
         <!-- /.control-sidebar -->
-    </div>
 </div>
 
 <!-- ./wrapper -->
@@ -118,20 +117,22 @@
                     if (data.status == 1) {
                         <!--关闭加载中-->
                         closeLoading();
+                        <!--渲染柱状图和饼状图-->
                         chartsRender(data);
                         alert(data.msg)
                         //修改词云图片
                         $("#imageFullScreen").attr("src", "../../" + data.data.wordCouldImg + "/?time=" + new Date().getTime())
                         $('#page').show();
+                        //重新渲染表格数据
                         reloadData(data.data.jobList);
 
                     }else{
                          <!--关闭加载中-->
                         closeLoading();
                         alert(data.msg);
+                        //隐藏
                         $('#page').hide();
                         $(".table-demo").hide();
-
                         $("#barChart").hide();
 
                     }
@@ -179,13 +180,15 @@
     })
 
     <!--渲染条状图和饼状图-->
+
     function chartsRender(data) {
+
         var pieChart = echarts.init(document.getElementById("barChart"));
         var dataName = [];
         var dataValue = [];
+        //后端返回数据中的所有分类词json数组
         var jsonList = data.data.words;
         let sumValue = 0;
-        let pieDataValues = [];
         $.each(jsonList, function (index, value) {
             dataName.push(value.name);
             dataValue.push(value.value)
@@ -357,6 +360,7 @@
           $(".table-demo").hide();
     }
     )
+//重新加载表格数据
 function reloadData(jobList) {
         $('#table').bootstrapTable('load', jobList);
          $(".table-demo").show();

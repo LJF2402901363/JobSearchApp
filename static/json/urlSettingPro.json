@@ -1,7 +1,7 @@
 {
   "url": "https://www.liepin.com/",
   "searchUrl":"https://www.liepin.com/zhaopin/",
-   "jobInfoLinkDiv": {"name1":".job-info h3 a"},
+ ,  "jobInfoLinkDiv": {"name1":".job-info h3 a"},
    "jobNameDiv": {"name1": "div.title-info > h1"},
     "jobCompanyNameDiv": {"name1": "div.title-info > h3 a"},
    "jobSalaryDiv": {
