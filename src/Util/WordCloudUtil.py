@@ -41,10 +41,20 @@ class WordCloudUtil:
     @staticmethod
     def getWordCouldJson(text,wordJson):
         """
-        将给定的文本进心分词处理，并且添加json格式的新词，在分词过程中wordJSon中的词语不被切分
-        :param text:
-        :param wordJson:
-        :return:
+        将给定的文本进心分词处理，并且添加json格式的新词，在分词过程中wordJSon中的词语不被切分，返回一个json数组
+        [
+        {
+        "name": name,
+        "value":value
+        },
+        {
+        "name": name,
+        "value":value
+        }
+        ]
+        :param text:需要进行分词的文本
+        :param wordJson:在分词过程中不被切分的词语的json数组
+        :return:返回分词一个分词和对应出现频率的json对象数组
         """
         for word in wordJson:
             jieba.add_word(word['word'],word['freq'])
@@ -59,8 +69,10 @@ class WordCloudUtil:
         # 注解：dict.get(word,0)当能查询到相匹配的字典时，就会显示相应key对应的value，如果不能的话，就会显示后面的这个参数
         # 有些不重要的词语但出现次数较多，可以通过构建排除词库excludes来删除
         items = list(counts.items())
-        items.sort(key=lambda x: x[1], reverse=True)  # 根据词语出现的次数进行从大到小排序
+        # 根据词语出现的次数进行从大到小排序
+        items.sort(key=lambda x: x[1], reverse=True)
         dictList = {}
         for item in items:
             dictList[item[0]] = item[1]
+        # 将字典转换为json对象
         return json.dumps(dictList,ensure_ascii=False)

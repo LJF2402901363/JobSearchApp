@@ -60,7 +60,7 @@ class JsonUtil:
         return json.loads(jsonStr)
 
     @staticmethod
-    def jsonListToViewJson(jsonObj, jobList):
+    def jsonListToViewJson(jsonObj, jobList,wordCouldImgPath,status,msg):
         """
         将一个json对象转换为符合前端页面展示数据的json字符串
         格式：
@@ -72,19 +72,22 @@ class JsonUtil:
               { name: key}
             ],
 
-            "totalValue": value,
-            "total":value,
             "jobInfoData":[{
             name:key
             }]
             },
-            "status":200
+            "wordCouldImg":"词云图保存路径",
+            "status":1,
+            "msg":"提示的内容"
 
         }
         "status":1}
         :param jobList: 所有职位的列表
         :param jsonObj: 需要转换的json对象数组
-        :return:
+        :param wordCouldImgPath: 词云图的图片路径
+        :param status: 状态
+        :param msg: 返回前端页面的提示信息
+        :return: 返回一个json格式字符串
         """
         jsonstr = '{ "data":{ "words":['
         index = 0
@@ -112,8 +115,8 @@ class JsonUtil:
             else:
                 jobListStr = jobListStr + '"codeName":"' + job.codeName + '"},'
         jsonstr = jsonstr + jobListStr + ']'
-        jsonstr = jsonstr + ',"wordCouldImg":"' + JsonUtil.getFileAndImgProValueByKey("wordCloudImg_small") + '"}'
-        jsonstr = jsonstr + ',"status":1,"msg":"搜索完成！"}'
+        jsonstr = jsonstr + ',"wordCouldImg":"' + wordCouldImgPath + '"}'
+        jsonstr = jsonstr + ',"status":' + str(status) + ',"msg":"' + msg + '"}'
         # print(jsonstr)
         return jsonstr
 

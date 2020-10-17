@@ -73,8 +73,6 @@ class RequestService:
             textFilePath = textFileDirPath + "/" + searchContent + "_" + dqs + ".txt"
             # 保存文本到指定的文件中去
             FileUtil.saveTextToFile(text=jobDesText, filePath=textFilePath)
-            # 除去文本中要忽略词，进行过滤替换为空格
-            jobDesText = re.sub(ignoreWords, ' ', jobDesText)
             # 将jobList集合转换为json格式
             jobListJsonStr = JsonUtil.listToJson(jobList)
             # 拼接json格式的文件名
@@ -83,7 +81,7 @@ class RequestService:
             FileUtil.saveTextToFile(jobListJsonStr, jsonFilePath)
 
         # 读取图片的路径
-        smallImgPath = JsonUtil.getFileAndImgProValueByKey('wordCloudImg_small')
+        smallImgPath = JsonUtil.getFileAndImgProValueByKey('wordCloudImg')
         # 读取背景图片的路径
         bgImgPath = JsonUtil.getFileAndImgProValueByKey('wordCloudBgImg')
         # 获取文本的词频率
@@ -95,7 +93,9 @@ class RequestService:
         # 转化为json对象
         jsonObj = json.loads(jsonData)
         # 格式化返回json字符串
-        jsonstr = JsonUtil.jsonListToViewJson(jsonObj, jobList)
+        status = 1
+        msg = "搜索完成"
+        jsonstr = JsonUtil.jsonListToViewJson(jsonObj, jobList,smallImgPath,status,msg)
         # 产生词云图片保存到指定的文件路径中
         WordCloudUtil.wordCould(jobDesText, bgImgPath, smallImgPath, 0.5)
 

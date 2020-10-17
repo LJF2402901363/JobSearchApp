@@ -112,7 +112,7 @@ class JobUtil:
         """
         for key in patternJson:
             html = BeautifulSoup(text, "html.parser")
-            jobName = html.select_one(patternJson[key])
-            if not jobName is None:
-                return jobName.text
+            jobNameDiv = html.select_one(patternJson[key])
+            if not jobNameDiv is None:
+                return jobNameDiv.text
         return ""
