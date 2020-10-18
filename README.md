@@ -196,10 +196,14 @@ newWords：在jieba库进行精确拆分提取文本内容得到每个词语的�
 
 # 7.项目启动
 
-### 7.1首先使用Git命令将项目拉取到本地
+### 7.1首先使用Git命令将项目从GitHub或者gitee（速度更快，并且还能看到文档中的图片便于运行图片，建议使用gitee）上拉取到本地
 
 ```
 git clone https://github.com/LJF2402901363/JobSearchApp.git
+```
+
+```
+git clone https://gitee.com/ljf2402901363/JobSearchApp.git
 ```
 
 ### 7.2使用pycharm打开项目
