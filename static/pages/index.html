@@ -132,7 +132,7 @@
                         alert(data.msg);
                         //隐藏
                         $('#page').hide();
-                        $(".table-demo").hide();
+                        $(".jobTableDiv").hide();
                         $("#barChart").hide();
 
                     }
@@ -142,7 +142,7 @@
                     closeLoading();
                     alert("搜索失败！");
                     $('#page').hide();
-                    $(".table-demo").hide();
+                    $(".jobTableDiv").hide();
                     $("#barChart").hide();
                 }
             })
@@ -357,13 +357,13 @@
                 }
             }
 			});
-          $(".table-demo").hide();
+          $(".jobTableDiv").hide();
     }
     )
 //重新加载表格数据
 function reloadData(jobList) {
         $('#table').bootstrapTable('load', jobList);
-         $(".table-demo").show();
+         $(".jobTableDiv").show();
   }
 
 </script>
