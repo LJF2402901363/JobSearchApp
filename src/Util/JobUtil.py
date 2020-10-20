@@ -41,15 +41,21 @@ class JobUtil:
         # 获取所有包含职业名称以及职业详细链接的a标签
         jobInfoDiv = soup.select(JsonUtil.getUrlSettingProValueByKey("jobInfoLinkDiv")['name1'])
         for div in jobInfoDiv:
-            # 将职位的详细链接添加到对应的集合中去
-            jobInfoLink = div['href']
-            if jobInfoLink.startswith("http"):
+             try:
+                # 将职位的详细链接添加到对应的集合中去
+                jobInfoLink = div['href']
+                if not jobInfoLink.startswith("http"):
+                    # 有些job的URL是不完整的需要补充,比如：/a/21271755.shtml，则要补偿为： https://www.liepin.com/a/21271755.shtml
+                    jobInfoLink = JsonUtil.getUrlSettingProValueByKey("url") + jobInfoLink
+                # 开始通过URL链接获取工作的具体封装信息
                 jobInfo = JobUtil.getJobInfo(jobInfoLink)
-                jobList.append(jobInfo)
-            else:
-                # 有些job的URL是不完整的需要补充,比如：/a/21271755.shtml，则要补偿为： https://www.liepin.com/a/21271755.shtml
-                jobInfo = JobUtil.getJobInfo(JsonUtil.getUrlSettingProValueByKey("url") + jobInfoLink)
-                jobList.append(jobInfo)
+                # 剔除那些职位爬取不到完整数据的情况
+                if not (len(jobInfo.jobName) == 0 or len(jobInfo.jobUrl) == 0):
+
+                    jobList.append(jobInfo)
+             except:
+                print("读取jobURL" + url + "对应信息有误。。")
+
         return jobList
     @staticmethod
     def getJobInfo(jobInfoUrl):
@@ -99,8 +105,10 @@ class JobUtil:
         # 获取工作的详细描述，职责要求
         jobDes = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobDesDiv"))
         jobDes = jobDes.replace(' ','').replace('\\','\\\\')
-        # print(jobDes)
         jobInfo.set_jobDes(jobDes)
+        # print(jobDes)
+
+
         return jobInfo
     @staticmethod
     def getValue(text, patternJson):

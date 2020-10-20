@@ -6,24 +6,35 @@ allUniv = []
 
 def getHTMLText(url):
     try:
+        # 获取请求
         r = requests.get(url, timeout=30)
         r.raise_for_status()
         r.encoding = 'utf-8'
+        # 返回的是URL响应源代码
         return r.text
     except:
         return ""
 
 
 def fillUnivList(soup):
+    # 提取567行数据
     data = soup.find_all('tr')
+    # 遍历每行
     for tr in data:
+        # 获取每行中的所有的列
         ltd = tr.find_all('td')
         if len(ltd) == 0:
             continue
+        # 每行中所有列的值,这里有六列，六个元素
         singleUniv = []
-
         for td in ltd:
-            singleUniv.append(td.text.strip())
+            # 获取列值
+            text = td.text
+            # 去掉空格
+            text = text.strip()
+            # 将列值添加到列表中
+            singleUniv.append(text)
+        # 将每行的列值数组添加到行列表中
         allUniv.append(singleUniv)
 
 
@@ -34,7 +45,7 @@ def printUnivList(num):
     for i in range(num):
         u = allUniv[i]
         print("{1:^2}{2:{0}^14}{3:{0}^3}{4:{0}^6}{5:{0}<10.1f}{6:{0}<5}".format(chr(12288), u[0], u[1], u[2], u[3],
-                                                                                eval(u[4]), u[5]))
+                                                                                eval(u[4]),u[5]))
         print("---------------------------------------------------------------------")
 
 
@@ -46,4 +57,6 @@ def main(num):
     printUnivList(num)
 
 
-main(10)
+
+if __name__ == '__main__':
+    main(10)

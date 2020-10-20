@@ -65,7 +65,7 @@
     <!-- 条形图  -->
     <div id="barChart" style="height:500px;margin-top:0px;" align="center"></div>
    <!--表格数据-->
-    <div class="table-demo" style="margin-top:0px;">
+    <div class="jobTableDiv" style="margin-top:0px;">
 			<table id="table"></table>
 		</div>
 
@@ -307,7 +307,10 @@
             }
 			}, {
 				field: 'name',
-				title: '职位名'
+				title: '职位名',
+                formatter:function(value, row, index){
+                 return '<a href="'+ row.jobUrl +'">'+ value +'</a>'
+                }
 			}, {
 				field: 'city',
 				title: '城市'

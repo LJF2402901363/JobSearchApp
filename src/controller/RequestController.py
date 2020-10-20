@@ -13,7 +13,7 @@ requestService = RequestService()
 def search():
     # 获取搜索框的内容
     searchContent = request.values.get("searchContent")
-    # 获取省文  本
+    # 获取省文本
     province = request.values.get("province")
     # 获市文本
     city = request.values.get("city")

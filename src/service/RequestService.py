@@ -18,88 +18,91 @@ class RequestService:
         :param cityText:市区
         :return:
         """
-        dqs = ''
-        if len(str(proviceText)) == 0 and len(str(cityText)) == 0:
+        try:
             dqs = ''
-        else:
-            cityCode = JsonUtil.getCityMapingProValueByKey(cityText)
-            proviceCode = JsonUtil.getCityMapingProValueByKey(proviceText)
-            if len(str(cityCode)) == 0 and len(str(proviceCode)) == 0:
-                return '{"status":0,"msg":"暂不支持搜索该城市哦"}'
+            if len(str(proviceText)) == 0 and len(str(cityText)) == 0:
+                dqs = ''
             else:
-                if len(str(cityCode)) != 0:
-                    dqs = cityCode
+                cityCode = JsonUtil.getCityMapingProValueByKey(cityText)
+                proviceCode = JsonUtil.getCityMapingProValueByKey(proviceText)
+                if len(str(cityCode)) == 0 and len(str(proviceCode)) == 0:
+                    return '{"status":0,"msg":"暂不支持搜索该城市哦"}'
                 else:
-                    dqs = proviceCode
-        # 每页的数量
-        pageSize = JsonUtil.getUrlSettingProValueByKey("pageSize")
-        # 需要爬取的分页数，每个任务爬取一页
-        pageCount = JsonUtil.getUrlSettingProValueByKey("pageCount")
-        # 具体爬取工作时的链接
-        searchUrl = JsonUtil.getUrlSettingProValueByKey("searchUrl")
-        # 特殊符号和语句需要除去
-        ignoreWords = JsonUtil.getFileAndImgProValueByKey('ignoreWords')
-        # 读取文本文件的所在文件夹
-        textFileDirPath = JsonUtil.getFileAndImgProValueByKey('textFilePathDir')
-        # 查看本地是有已经存储有该搜索条件匹配的，如果存在则直接从本地中获取，否则在网络上中获取.
-        textDesFilePath = textFileDirPath + "/" + searchContent + "_" + dqs + ".txt"
-        # 用于所有工作对象存储的集合
-        jobList = []
-        # 所有工作的岗位要求和描述
-        jobDesText = ''
-        # 判断对应的文件名是否存在，如果存在则说明本地已经有该文件，否则没有
-        if os.path.isfile(textDesFilePath):
-            # 或名该搜索已经缓存到本地,开始读取
-            jobDesText = FileUtil.readFileToTex(textDesFilePath,ignoreWords)
-            # 拼接所有工作信息json格式的文件名
-            jobJsonFilePath = textFileDirPath + "/" + searchContent + "_" + dqs + ".json"
-            # 读取json对应文件中的job数组
-            jobList = JsonUtil.readJsonFileToList(jobJsonFilePath)
-        else:
-            for i in range(pageCount):
-                print("开始爬取第" + str(i + 1) + "页数据\n")
-                # 组装每页的职位URL
-                url = searchUrl + "?key=" + searchContent + "&dqs=" + dqs + "&pageSize=" + str(
-                    pageSize) + "&curPage=" + str(i)
-                # 获取爬取的所有JobInfo集合
-                pageJobList = JobUtil.getJobList(url)
-                # 将获取的职位集合都保存到jobList
-                for job in pageJobList:
-                    jobList.append(job)
-                print("爬取第" + str(i + 1) + "页数据完成。。\n")
-            # 所有工作岗位描述的文本内容
-            jobDesText = JsonUtil.getJobListDesStr(jobList)
-            # 拼接文件格名以txt格式保存,全部职位信息的要求都保存到同一个文件中去
-            textFilePath = textFileDirPath + "/" + searchContent + "_" + dqs + ".txt"
-            # 保存文本到指定的文件中去
-            FileUtil.saveTextToFile(text=jobDesText, filePath=textFilePath)
-            # 将jobList集合转换为json格式
-            jobListJsonStr = JsonUtil.listToJson(jobList)
-            # 拼接json格式的文件名
-            jsonFilePath = textFileDirPath + "/" + searchContent + "_" + dqs + ".json"
-            # 将所有的工作信息以json格式保存到文件中去
-            FileUtil.saveTextToFile(jobListJsonStr, jsonFilePath)
+                    if len(str(cityCode)) != 0:
+                        dqs = cityCode
+                    else:
+                        dqs = proviceCode
+            # 每页的数量
+            pageSize = JsonUtil.getUrlSettingProValueByKey("pageSize")
+            # 需要爬取的分页数，每个任务爬取一页
+            pageCount = JsonUtil.getUrlSettingProValueByKey("pageCount")
+            # 具体爬取工作时的链接
+            searchUrl = JsonUtil.getUrlSettingProValueByKey("searchUrl")
+            # 特殊符号和语句需要除去
+            ignoreWords = JsonUtil.getFileAndImgProValueByKey('ignoreWords')
+            # 读取文本文件的所在文件夹
+            textFileDirPath = JsonUtil.getFileAndImgProValueByKey('textFilePathDir')
+            # 查看本地是有已经存储有该搜索条件匹配的，如果存在则直接从本地中获取，否则在网络上中获取.
+            textDesFilePath = textFileDirPath + "/" + searchContent + "_" + dqs + ".txt"
+            # 用于所有工作对象存储的集合
+            jobList = []
+            # 所有工作的岗位要求和描述
+            jobDesText = ''
+            # 判断对应的文件名是否存在，如果存在则说明本地已经有该文件，否则没有
+            if os.path.isfile(textDesFilePath):
+                # 或名该搜索已经缓存到本地,开始读取
+                jobDesText = FileUtil.readFileToTex(textDesFilePath, ignoreWords)
+                # 拼接所有工作信息json格式的文件名
+                jobJsonFilePath = textFileDirPath + "/" + searchContent + "_" + dqs + ".json"
+                # 读取json对应文件中的job数组
+                jobList = JsonUtil.readJsonFileToList(jobJsonFilePath)
+            else:
+                for i in range(pageCount):
+                    print("开始爬取第" + str(i + 1) + "页数据\n")
+                    # 组装每页的职位URL
+                    url = searchUrl + "?key=" + searchContent + "&dqs=" + dqs + "&pageSize=" + str(
+                        pageSize) + "&curPage=" + str(i)
+                    # 获取爬取的所有JobInfo集合
+                    pageJobList = JobUtil.getJobList(url)
+                    # 将获取的职位集合都保存到jobList
+                    for job in pageJobList:
+                        jobList.append(job)
+                    print("爬取第" + str(i + 1) + "页数据完成。。\n")
+                # 所有工作岗位描述的文本内容
+                jobDesText = JsonUtil.getJobListDesStr(jobList)
+                # 拼接文件格名以txt格式保存,全部职位信息的要求都保存到同一个文件中去
+                textFilePath = textFileDirPath + "/" + searchContent + "_" + dqs + ".txt"
+                # 保存文本到指定的文件中去
+                FileUtil.saveTextToFile(text=jobDesText, filePath=textFilePath)
+                # 将jobList集合转换为json格式
+                jobListJsonStr = JsonUtil.listToJson(jobList)
+                # 拼接json格式的文件名
+                jsonFilePath = textFileDirPath + "/" + searchContent + "_" + dqs + ".json"
+                # 将所有的工作信息以json格式保存到文件中去
+                FileUtil.saveTextToFile(jobListJsonStr, jsonFilePath)
 
-        # 读取图片的路径
-        smallImgPath = JsonUtil.getFileAndImgProValueByKey('wordCloudImg')
-        # 读取背景图片的路径
-        bgImgPath = JsonUtil.getFileAndImgProValueByKey('wordCloudBgImg')
-        # 获取文本的词频率
-        newWordsStr = JsonUtil.getFileAndImgProValueByKey('newWords')
-        # 将json格式的newWords字符串转换为json对象
-        newWords = JsonUtil.jsonStrToJson(newWordsStr)
-        # 从文本中获取分析后的json键值对
-        jsonData = WordCloudUtil.getWordCouldJson(jobDesText, newWords)
-        # 转化为json对象
-        jsonObj = json.loads(jsonData)
-        # 格式化返回json字符串
-        status = 1
-        msg = "搜索完成"
-        jsonstr = JsonUtil.jsonListToViewJson(jsonObj, jobList,smallImgPath,status,msg)
-        # 产生词云图片保存到指定的文件路径中
-        WordCloudUtil.wordCould(jobDesText, bgImgPath, smallImgPath, 0.5)
-
-        return jsonstr
+            # 读取图片的路径
+            smallImgPath = JsonUtil.getFileAndImgProValueByKey('wordCloudImg')
+            # 读取背景图片的路径
+            bgImgPath = JsonUtil.getFileAndImgProValueByKey('wordCloudBgImg')
+            # 获取文本的词频率
+            newWordsStr = JsonUtil.getFileAndImgProValueByKey('newWords')
+            # 将json格式的newWords字符串转换为json对象
+            newWords = JsonUtil.jsonStrToJson(newWordsStr)
+            # 从文本中获取分析后的json键值对
+            jsonData = WordCloudUtil.getWordCouldJson(jobDesText, newWords)
+            # 转化为json对象
+            jsonObj = json.loads(jsonData)
+            # 格式化返回json字符串
+            status = 1
+            msg = "搜索完成"
+            jsonstr = JsonUtil.jsonListToViewJson(jsonObj, jobList, smallImgPath, status, msg)
+            # 产生词云图片保存到指定的文件路径中
+            WordCloudUtil.wordCould(jobDesText, bgImgPath, smallImgPath, 0.5)
+            return jsonstr
+        except:
+            jsonstr = '{"status":0,"msg":"服务器发生错误！"}'
+            return jsonstr
 
     def multiThreadHandleSearch(self, searchContent, proviceText, cityText):
         """
