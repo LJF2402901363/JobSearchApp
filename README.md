@@ -186,7 +186,7 @@ newWords：在jieba库进行精确拆分提取文本内容得到每个词语的�
 
 ## 6.效果图
 
-![image-20201018015507739](readMeImages\image-9.png)
+![image-20201018015507739](readMeImages/image-9.png)
 
 ![image-20200929102739670](readMeImages/image-6.png)
 
@@ -208,7 +208,7 @@ git clone https://gitee.com/ljf2402901363/JobSearchApp.git
 
 ### 7.2使用pycharm打开项目
 
-![image-20201018154240960](E:\flaskProject\readMeImages\image-10.png)
+![image-20201018154240960](readMeImages/image-10.png)
 
 使用pycharm的控制台Terminal使用命令安装依赖包：
 
@@ -216,19 +216,19 @@ git clone https://gitee.com/ljf2402901363/JobSearchApp.git
 pip install -r requirements.txt
 ```
 
-![image-20201018155322382](E:\flaskProject\readMeImages\image-15.png)
+![image-20201018155322382](readMeImages/image-15.png)
 
 ## 7.3使用右键将src目录，找到Mark Directory as ,将src目录设置为 Sources Root 
 
-![image-20201018154417563](E:\flaskProject\readMeImages\image-11.png)
+![image-20201018154417563](readMeImages/image-11.png)
 
 ## 7.4配置Flask
 
-![image-20201018154801591](E:\flaskProject\readMeImages\image-12.png)
+![image-20201018154801591](readMeImages/image-12.png)
 
-![image-20201018154922199](E:\flaskProject\readMeImages\image-13.png)
+![image-20201018154922199](readMeImages/image-13.png)
 
-![image-20201018155115381](E:\flaskProject\readMeImages\image-14.png)
+![image-20201018155115381](readMeImages/image-14.png)
 
 Target：指定Flask项目中run方法所在的.py文件。本项目中位于controller包下的RequestController.py下。
 
@@ -236,6 +236,6 @@ Working directory:指定工作目录。这里指定项目根目录即可。
 
 ### 7.5目前笔者仅在pycharm上运行本项目。要是使用该其它编译器运行比如vscode，会导致目录路径结构不一样从而加载配置文件时出现错误。而加载配置文件核心所在类即是Util包下的JsonUtil.py
 
-![image-20201018160329947](E:\flaskProject\readMeImages\image-16.png)
+![image-20201018160329947](readMeImages/image-16.png)
 
 只需要加载的路径和对应json文件所在的路径一致即可。至于其他问题请自行解决，只要不报能够解决引入自定义包文件即可。
