@@ -26,7 +26,7 @@ class JobUtil:
 
 
     @staticmethod
-    def getJobList(url):
+    def getJobList(url,jobPro):
         """
         获取URL对应的所有的职位信息集合
         :param url: 指定的URL
@@ -39,16 +39,16 @@ class JobUtil:
         # 构建解析对象
         soup = BeautifulSoup(html_tex, "html.parser")
         # 获取所有包含职业名称以及职业详细链接的a标签
-        jobInfoDiv = soup.select(JsonUtil.getUrlSettingProValueByKey("jobInfoLinkDiv")['name1'])
+        jobInfoDiv = JobUtil.getValue(html_tex, jobPro["jobInfoLinkDiv"])
         for div in jobInfoDiv:
              try:
                 # 将职位的详细链接添加到对应的集合中去
                 jobInfoLink = div['href']
                 if not jobInfoLink.startswith("http"):
                     # 有些job的URL是不完整的需要补充,比如：/a/21271755.shtml，则要补偿为： https://www.liepin.com/a/21271755.shtml
-                    jobInfoLink = JsonUtil.getUrlSettingProValueByKey("url") + jobInfoLink
+                    jobInfoLink = jobPro["url"] + jobInfoLink
                 # 开始通过URL链接获取工作的具体封装信息
-                jobInfo = JobUtil.getJobInfo(jobInfoLink)
+                jobInfo = JobUtil.getJobInfo(jobInfoLink,jobPro)
                 # 剔除那些职位爬取不到完整数据的情况
                 if not (len(jobInfo.jobName) == 0 or len(jobInfo.jobUrl) == 0):
 
@@ -58,7 +58,7 @@ class JobUtil:
 
         return jobList
     @staticmethod
-    def getJobInfo(jobInfoUrl):
+    def getJobInfo(jobInfoUrl,jobPro):
         """
         通过工作的详细信息URL获取对应的封装对象
         :param jobInfoUrl: 工作的详细信息URL
@@ -71,39 +71,39 @@ class JobUtil:
         # 获取工作URL详细的信息的网页源码
         html_tex = JobUtil.getHtmlTex(jobInfoUrl)
         # 获取工作名称
-        jobName = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobNameDiv"))
+        jobName = JobUtil.getValue(html_tex, jobPro["jobNameDiv"])
         jobInfo.set_jobName(jobName.replace('"',''))
         # print(jobName)
         # 获取薪水
-        salary = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobSalaryDiv"))
+        salary = JobUtil.getValue(html_tex, jobPro["jobSalaryDiv"])
         jobInfo.set_jobSalary(salary.strip())
         # print(salary)
         # 获取公司名称
-        jobCompanyName = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobCompanyNameDiv"))
+        jobCompanyName = JobUtil.getValue(html_tex, jobPro["jobCompanyNameDiv"])
         jobInfo.set_companyName(jobCompanyName.strip())
         # print(jobCompanyName)
         # 获取工作所在城市
-        city = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobCityDiv"))
+        city = JobUtil.getValue(html_tex, jobPro["jobCityDiv"])
         jobInfo.set_jobCity(city.strip())
         # print(city)
         # 获取工作要求的文凭
-        edu = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobEduDiv"))
+        edu = JobUtil.getValue(html_tex, jobPro["jobEduDiv"])
         jobInfo.set_jobEdu(edu.strip())
         # print(edu)
         # 获取工作经验年长
-        jobExperienceTime = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobExperienceTimeDiv"))
+        jobExperienceTime = JobUtil.getValue(html_tex, jobPro["jobExperienceTimeDiv"])
         # print(jobExperienceTime)
         jobInfo.set_jobExperienceTime(jobExperienceTime.strip())
         # 获取需要经过的编程语言
-        codeName = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobCodeNameDiv"))
+        codeName = JobUtil.getValue(html_tex, jobPro["jobCodeNameDiv"])
         # print(codeName)
         jobInfo.set_codeName(codeName.strip())
         # 获取工作要求的年龄限制
-        age = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobAgeDiv"))
+        age = JobUtil.getValue(html_tex, jobPro["jobAgeDiv"])
         jobInfo.set_age(age.strip())
         # print(age)
         # 获取工作的详细描述，职责要求
-        jobDes = JobUtil.getValue(html_tex, JsonUtil.getUrlSettingProValueByKey("jobDesDiv"))
+        jobDes = JobUtil.getValue(html_tex, jobPro["jobDesDiv"])
         jobDes = jobDes.replace(' ','').replace('\\','\\\\')
         jobInfo.set_jobDes(jobDes)
         # print(jobDes)

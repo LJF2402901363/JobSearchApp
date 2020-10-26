@@ -40,13 +40,13 @@ class JsonUtil:
         return JsonUtil.stc_urlSettingPro[key]
 
     @staticmethod
-    def getCityMapingProValueByKey(keyName):
+    def getCityMapingProValueByKey(cityMapJson,keyName):
         """
         通过key来获取json对应的value值
         :param key: json对象中的key
         :return:
         """
-        for jsonCity in JsonUtil.stc_cityMapingPro['liepin']:
+        for jsonCity in cityMapJson:
             if jsonCity['name'] == keyName:
                 return jsonCity['value']
         return ''

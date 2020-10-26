@@ -1,7 +1,8 @@
 {
   "liepin": {
 		"url": "https://www.liepin.com/",
-		"searchUrl": "https://www.liepin.com/zhaopin/",
+		"searchUrl": "https://www.liepin.com/zhaopin/?key={}&dqs={}&pageSize={}&curPage={}",
+	    "cityMaperName": "liepin",
 		"jobInfoLinkDiv": {
 			"name1": ".job-info h3 a"
 		},
@@ -40,39 +41,38 @@
 	},
   "kanzhun": {
 		"url": "https://www.kanzhun.com/",
-		"searchUrl": "https://www.kanzhun.com/search/",
+		"searchUrl": "https://www.kanzhun.com/search/?q={}&city={}&pageSize={}&pageCurrent={}&type=recruit",
+	   "cityMaperName": "kanzhun",
 		"jobInfoLinkDiv": {
-			"name1": ".job-info h3 a"
+			"name1": ".position-item a"
 		},
 		"jobNameDiv": {
-			"name1": "div.title-info > h1"
+			"name1": ".info h1"
 		},
 		"jobCompanyNameDiv": {
-			"name1": "div.title-info > h3 a"
+			"name1": ".content-title strong"
 		},
 		"jobSalaryDiv": {
-			"name1": ".job-item-title",
-			"name2": ".job-main-title",
-			"name3": ".job-title-left"
+			"name1": ".salary-num"
 		},
 		"jobCityDiv": {
-			"name1": "div.job-title-left > p.basic-infor > span > a"
+			"name1": "div.desc-wrap > p > span:nth-of-type(1)"
 		},
 		"jobEduDiv": {
-			"name1": "div.job-title-left > div > span:nth-of-type(1)"
+			"name1": "div.desc-wrap > p > span:nth-of-type(3)"
 		},
 		"jobExperienceTimeDiv": {
-			"name1": "div.job-title-left > div > span:nth-of-type(2)"
+			"name1": "div.desc-wrap > p > span:nth-of-type(2)"
 		},
 		"jobCodeNameDiv": {
-			"name1": "div.job-title-left > div > span:nth-of-type(3)"
+
 		},
 		"jobAgeDiv": {
-			"name1": "div.job-title-left > div > span:nth-of-type(4)"
+
 		},
 		"jobDesDiv": {
-			"name1": "div.job-item.main-message.job-description > div",
-			"name2": "div.job-main.job-description.main-message > div"
+			"name1": "div.company-recruit-detail > div.content > div > p:nth-of-type(2)"
+
 		},
 		"pageCount": 10,
 		"pageSize": 80
