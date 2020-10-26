@@ -1,62 +1,33 @@
+#e24.1AutoKeywordSearch.py
 import requests
 from bs4 import BeautifulSoup
-
-allUniv = []
-
-
-def getHTMLText(url):
+import re
+import json
+def getKeywordResult(keyword):
+    url ='http://www.baidu.com/s?wd='+keyword
     try:
-        # 获取请求
         r = requests.get(url, timeout=30)
         r.raise_for_status()
         r.encoding = 'utf-8'
-        # 返回的是URL响应源代码
         return r.text
     except:
         return ""
-
-
-def fillUnivList(soup):
-    # 提取567行数据
-    data = soup.find_all('tr')
-    # 遍历每行
-    for tr in data:
-        # 获取每行中的所有的列
-        ltd = tr.find_all('td')
-        if len(ltd) == 0:
-            continue
-        # 每行中所有列的值,这里有六列，六个元素
-        singleUniv = []
-        for td in ltd:
-            # 获取列值
-            text = td.text
-            # 去掉空格
-            text = text.strip()
-            # 将列值添加到列表中
-            singleUniv.append(text)
-        # 将每行的列值数组添加到行列表中
-        allUniv.append(singleUniv)
-
-
-def printUnivList(num):
-    print("{1:^2}{2:{0}^13}{3:{0}^3}{4:{0}^6}{5:{0}<6}{6:{0}<5}".format(chr(12288), "排名", "学校名称", "省市", "类型", "总分",
-                                                                        "办学层次"))
-    print("---------------------------------------------------------------------")
-    for i in range(num):
-        u = allUniv[i]
-        print("{1:^2}{2:{0}^14}{3:{0}^3}{4:{0}^6}{5:{0}<10.1f}{6:{0}<5}".format(chr(12288), u[0], u[1], u[2], u[3],
-                                                                                eval(u[4]),u[5]))
-        print("---------------------------------------------------------------------")
-
-
-def main(num):
-    url = 'https://www.shanghairanking.cn/rankings/bcur/2020'
-    html = getHTMLText(url)
+def parserLinks(html):
     soup = BeautifulSoup(html, "html.parser")
-    fillUnivList(soup)
-    printUnivList(num)
-
-
-
-if __name__ == '__main__':
-    main(10)
+    links = []
+    mylist=[]
+    for div in soup.find_all('div', {'data-tools': re.compile('title')}):
+        data = div.attrs['data-tools']  #获得属性值
+        d = json.loads(data)        #将属性值转换成字典
+        links.append(d['title']+'\n     '+d['url'])    #将返回链接的题目返回
+     #   mylist.append(links)
+   # return mylist
+    return links
+def main():
+    html = getKeywordResult('Python')
+    ls = parserLinks(html)
+    count = 1
+    for i in ls:
+        print("[{:^3}]{}".format(count,i))
+        count += 1
+main()

@@ -46,7 +46,7 @@ class JsonUtil:
         :param key: json对象中的key
         :return:
         """
-        for jsonCity in JsonUtil.stc_cityMapingPro['citys']:
+        for jsonCity in JsonUtil.stc_cityMapingPro['liepin']:
             if jsonCity['name'] == keyName:
                 return jsonCity['value']
         return ''
