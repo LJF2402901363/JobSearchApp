@@ -36,10 +36,10 @@ class JobUtil:
         html_tex = JobUtil.getHtmlTex(url)
         # print(html_tex)
         jobList = []
-        # 构建解析对象
-        soup = BeautifulSoup(html_tex, "html.parser")
+        # 工作列表选择器
+        jobLinkListSelectors = jobPro["jobInfoLinkDiv"]
         # 获取所有包含职业名称以及职业详细链接的a标签
-        jobInfoDiv = JobUtil.getValue(html_tex, jobPro["jobInfoLinkDiv"])
+        jobInfoDiv = JobUtil.getElements(html_tex,jobLinkListSelectors)
         for div in jobInfoDiv:
              try:
                 # 将职位的详细链接添加到对应的集合中去
@@ -51,7 +51,7 @@ class JobUtil:
                 jobInfo = JobUtil.getJobInfo(jobInfoLink,jobPro)
                 # 剔除那些职位爬取不到完整数据的情况
                 if not (len(jobInfo.jobName) == 0 or len(jobInfo.jobUrl) == 0):
-
+                    jobInfo.printJobInfo()
                     jobList.append(jobInfo)
              except:
                 print("读取jobURL" + url + "对应信息有误。。")
@@ -72,7 +72,7 @@ class JobUtil:
         html_tex = JobUtil.getHtmlTex(jobInfoUrl)
         # 获取工作名称
         jobName = JobUtil.getValue(html_tex, jobPro["jobNameDiv"])
-        jobInfo.set_jobName(jobName.replace('"',''))
+        jobInfo.set_jobName(jobName.replace('"','').replace("\\","/"))
         # print(jobName)
         # 获取薪水
         salary = JobUtil.getValue(html_tex, jobPro["jobSalaryDiv"])
@@ -123,4 +123,18 @@ class JobUtil:
             jobNameDiv = html.select_one(patternJson[key])
             if not jobNameDiv is None:
                 return jobNameDiv.text
+        return ""
+    @staticmethod
+    def getElements(text, patternJson):
+        """
+        通过网页源码以及某个工作字段的选择器json数组来获取工作的属性
+        :param text: 网页源码
+        :param patternJson: 某个工作字段的选择器json数组，比如 薪水的字段对应的选择器有三个，那么其对应的json字符串为 {"name1":value1,"name2":value2,"name3":value3}
+        :return: 返回某个字段的内容
+        """
+        for key in patternJson:
+            html = BeautifulSoup(text, "html.parser")
+            jobNameDiv = html.select(patternJson[key])
+            if not jobNameDiv is None and len(jobNameDiv) > 0:
+                return jobNameDiv
         return ""

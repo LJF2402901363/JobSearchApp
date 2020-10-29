@@ -295,6 +295,11 @@
 </script>
 <script>
     $(function () {
+        window.jobJumpEvent = {
+    'click #clickJumEvent': function (e, value, row, index) {
+       window.open(row.jobUrl)
+     }
+   };
         //设置需要显示的列
 			var columns = [{
 				field: 'Id',
@@ -309,8 +314,9 @@
 				field: 'name',
 				title: '职位名',
                 formatter:function(value, row, index){
-                 return '<a href="'+ row.jobUrl +'">'+ value +'</a>'
-                }
+                 return '<a id="clickJumEvent" href="#">'+ value +'</a>'
+                },
+                events:jobJumpEvent
 			}, {
 				field: 'city',
 				title: '城市'
